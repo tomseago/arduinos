@@ -4,15 +4,19 @@
 #include <mtui.h>
 
 #include <mt-neopixel.h>
+#include <mtlpd8806.h>
+#include <SPI.h>
 #include <mt-harnass.h>
 
 MTUI ui(A0);
-MTHarnass harnass(6);
+MTHarnass harnass(5.
+
+, 0);
 
 void setup() {
 
-  ui.begin();
   harnass.begin();
+  ui.begin();
 }
 
 void loop() {

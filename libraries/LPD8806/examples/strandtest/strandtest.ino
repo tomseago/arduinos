@@ -4,8 +4,6 @@
  #include <avr/power.h>
 #endif
 
-#include "MicroView.h"
-
 // Example to control LPD8806-based RGB LED Modules in a strip
 
 /*****************************************************************************/
@@ -14,8 +12,8 @@
 int nLEDs = 32;
 
 // Chose 2 pins for output; can be any valid output pins:
-int dataPin  = 5;
-int clockPin = 6;
+int dataPin  = 2;
+int clockPin = 3;
 
 // First parameter is the number of LEDs in the strand.  The LED strips
 // are 32 LEDs per meter but you can extend or cut the strip.  Next two
@@ -40,85 +38,36 @@ void setup() {
 
   // Update the strip, to start they are all 'off'
   strip.show();
-  
-  	uView.begin();				// start MicroView
-	uView.clear(PAGE);			// clear page
-	uView.print("HelloWorld");	// display HelloWorld
-	uView.display();
 }
 
-void text2(char *t1, char *t2) {
-  uView.clear(PAGE);
-  uView.setCursor(0,0);
-  uView.print(t1);
-  uView.setCursor(0,9);
-  uView.print(t2);
-  uView.display();
-}
 
 void loop() {
 
   // Send a simple pixel chase in...
-  text2("colorChase", "White");
   colorChase(strip.Color(127, 127, 127), 50); // White
-
-  text2("colorChase", "Red");
   colorChase(strip.Color(127,   0,   0), 50); // Red
-
-  text2("colorChase", "Yellow");
   colorChase(strip.Color(127, 127,   0), 50); // Yellow
-
-  text2("colorChase", "Green");
   colorChase(strip.Color(  0, 127,   0), 50); // Green
-
-  text2("colorChase", "Cyan");
   colorChase(strip.Color(  0, 127, 127), 50); // Cyan
-
-  text2("colorChase", "Blue");
   colorChase(strip.Color(  0,   0, 127), 50); // Blue
-
-  text2("colorChase", "Violet");
   colorChase(strip.Color(127,   0, 127), 50); // Violet
 
   // Send a theater pixel chase in...
-  text2("theater", "White");
   theaterChase(strip.Color(127, 127, 127), 50); // White
-
-  text2("theater", "Red");
   theaterChase(strip.Color(127,   0,   0), 50); // Red
-
-  text2("theater", "Yello");
   theaterChase(strip.Color(127, 127,   0), 50); // Yellow
-
-  text2("theater", "Green");
   theaterChase(strip.Color(  0, 127,   0), 50); // Green
-
-  text2("theater", "Cyan");
   theaterChase(strip.Color(  0, 127, 127), 50); // Cyan
-
-  text2("theater", "Blue");
   theaterChase(strip.Color(  0,   0, 127), 50); // Blue
-
-  text2("theater", "Violet");
   theaterChase(strip.Color(127,   0, 127), 50); // Violet
 
   // Fill the entire strip with...
-  text2("colorWipe", "Red");
   colorWipe(strip.Color(127,   0,   0), 50);  // Red
-
-  text2("colorWipe", "Green");
   colorWipe(strip.Color(  0, 127,   0), 50);  // Green
-
-  text2("colorWipe", "Blue");
   colorWipe(strip.Color(  0,   0, 127), 50);  // Blue
 
-  text2("Rainbow", "");
   rainbow(10);
-
-  text2("Rainbow", "Cycle");
-  rainbowCycle(5);  // make it go through the cycle fairly fast
-
-  text2("theater", "Rainbow");
+  rainbowCycle(0);  // make it go through the cycle fairly fast
   theaterChaseRainbow(50);
 }
 

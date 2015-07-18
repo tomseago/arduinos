@@ -17,7 +17,7 @@ public:
     Adafruit_NeoPixel sash;
     LPD8806 arm;
 
-    MTHarnass(uint8_t sashPin, uint8_t armPin);
+    MTHarnass(uint8_t sashPin);
 
     void begin();
     void loop();

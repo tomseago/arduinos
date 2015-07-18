@@ -104,7 +104,7 @@ void MTUI::registerButton() {
     switch(setupState) {
         case SETUP_STATE_ONE:
             if (lastButton == 1) {
-                refOne = (lastRefVal - lastPinVal) + 10;
+                refOne = (lastPinVal - lastRefVal) + 10;
                 setupState = SETUP_STATE_TWO;
             }
             break;

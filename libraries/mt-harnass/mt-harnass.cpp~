@@ -36,9 +36,9 @@ void MTHarnass::solidColor(uint8_t r, uint8_t g, uint8_t b, uint8_t flags) {
 
     if (flags & F_ARM) {
         for(uint8_t i=0; i<arm.numPixels(); i++) {
-            arm.setPixelColor(i, r, g, b);
+            //arm.setPixelColor(i, r, g, b);
         }
-        arm.show();
+        //arm.show();
     }
 
 }

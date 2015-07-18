@@ -29,8 +29,6 @@ private:
     uint8_t lastButton;
     uint8_t registeredButton;
 
-    void showDebug();
-
     void registerButton();
     void resetSetupState();
     void renderSetupState();
