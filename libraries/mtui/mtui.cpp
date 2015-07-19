@@ -9,8 +9,9 @@ extern MTHarnass harnass;
 
 #define MENU_TOP    0
 #define MENU_COLORS 1
+#define MENU_ANIMS  2
 
-uint8_t const menuMax[] = { 4, 11 };
+uint8_t const menuMax[] = { 4, 11, 2 };
 
 #define SETUP_STATE_ONE   1
 #define SETUP_STATE_TWO   2
@@ -72,7 +73,7 @@ void MTUI::loop() {
         // TODO: Long button presses????
 
         // For now, just bail 
-        showDebug();
+        //showDebug();
         return;
     }
 
@@ -80,7 +81,7 @@ void MTUI::loop() {
     lastButton = button;
     debounceCount = 0;
 
-    showDebug();
+    //showDebug();
 }
 
 void MTUI::showDebug() {
@@ -182,7 +183,7 @@ void MTUI::renderSetupState() {
     uView.clear(PAGE);
 
     uView.setCursor(0,0);
-    uView.print("[ BTN SETUP ]");
+    uView.print("<BTN SETUP>");
     uView.setCursor(12,12);
 
     harnass.solidColor(0, 64, 64, F_SASH);
@@ -270,12 +271,31 @@ void MTUI::menuSelect(bool into) {
         case MENU_TOP:
             switch(menuCursor) {
             case 0:
+                navigateTo(MENU_ANIMS);
+                break;
+
+            case 1:
                 navigateTo(MENU_COLORS);
                 break;
             }
             break;
 
+        case MENU_ANIMS:
+            switch(menuCursor) {
+            case 0:
+                harnass.startAnimation(ANIM_NONE);
+                break;
+
+            case 1:
+                harnass.startAnimation(ANIM_ALL_BLINK);
+                break;
+
+            }
+            break;
+
         case MENU_COLORS:
+            harnass.startAnimation(ANIM_NONE);
+            
             switch(menuCursor) {
             case 0: // Red
                 harnass.solidColor(255, 0, 0, F_BOTH);
@@ -359,8 +379,13 @@ void MTUI::renderMenu() {
         case MENU_TOP:
             uView.print("TOP");
             break;
+
         case MENU_COLORS:
             uView.print("Colors");
+            break;
+
+        case MENU_ANIMS:
+            uView.print("Anims");
             break;
     }
 
@@ -390,11 +415,11 @@ void MTUI::printMenuItem(int8_t menuIx) {
     case MENU_TOP:
         switch(menuIx) {
         case 0:
-            uView.print("Colors");
+            uView.print("Animations");
             break;
 
         case 1:
-            uView.print("Slow Shows");
+            uView.print("Colors");
             break;
 
         case 2:
@@ -403,6 +428,18 @@ void MTUI::printMenuItem(int8_t menuIx) {
 
         case 3:
             uView.print("Settings");
+            break;
+        }
+        break;
+
+    case MENU_ANIMS: 
+        switch(menuIx) {
+        case 0:
+            uView.print("All Off");
+            break;
+
+        case 1:
+            uView.print("All Blink");
             break;
         }
         break;

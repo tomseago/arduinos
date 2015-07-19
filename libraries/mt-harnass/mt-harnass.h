@@ -11,11 +11,33 @@
 
 #define F_BOTH (F_SASH | F_ARM)
 
+enum animName_t {
+	ANIM_NONE = 0
+
+	, ANIM_ALL_BLINK = 1
+
+};
+
+// #define ANIM_NONE  0
+// #define ANIM_BLINK 1
+
+struct animParams_t {
+	uint32_t currentFrame;
+	uint32_t startedAt;
+
+	uint32_t totalFrames;
+	uint32_t frameLength;
+};
+
+
 class MTHarnass {
 
 public:
     Adafruit_NeoPixel sash;
     LPD8806 arm;
+
+    animParams_t animParams;
+    uint8_t currentAnim;
 
     MTHarnass(uint8_t sashPin, uint8_t armPin);
 
@@ -23,6 +45,11 @@ public:
     void loop();
 
     void solidColor(uint8_t r, uint8_t g, uint8_t b, uint8_t flags);
+
+    void startAnimation(animName_t animNum);
+
+    void BLINK_setup();
+    void BLINK_drawFrame();
 };
 
 
