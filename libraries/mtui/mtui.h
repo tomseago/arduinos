@@ -6,10 +6,23 @@
 #include <avr/pgmspace.h>
 
 enum inputMode_t {
-    MODE_MENU = 0,
+    MODE_SETUP_ONE = 0,
+    MODE_SETUP_TWO,
+    MODE_SETUP_THREE,
+    MODE_SETUP_FOUR,
+
+    MODE_COMMAND,
+
+    MODE_MENU,
     MODE_COLOR_SELECT,
     MODE_REGISTERS,
     MODE_BRIGHTNESS
+};
+
+enum commandMode_t {
+    COMMAND_MODE_NORMAL = 0,
+    COMMAND_MODE_BRIGHTNESS,
+    COMMAND_MODE_ANIMATION
 };
 
 class MTUI {
@@ -29,19 +42,25 @@ public:
     bool regB = false;
     bool regC = false;
 
+    // Will stay at bottom of screen until overwritten
+    char msg[20];
+
+    void setMsg(const char* str);
+
 private:
     uint8_t pin;
 
     uint16_t refOne;
     uint16_t refTwo;
     uint16_t refThree;
-    uint8_t setupState;
 
     int lastPinVal;
     int lastRefVal;
-    uint8_t debounceCount;
     uint8_t lastButton;
-    uint8_t registeredButton;
+    int32_t lastButtonStart;
+
+    uint32_t command;
+    bool returnToCommand;
 
     // For registers
     bool inShiftMode;
@@ -49,11 +68,14 @@ private:
     void showDebug();
 
     void registerButton();
+
     void resetSetupState();
-    void renderSetupState();
 
-
-    void singleClick();
+    commandMode_t commandMode;
+    void doCommand();
+    void doNormalCommand();
+    void doBrightnessCommand();
+    void doAnimationCommand();
 
     void menuMove(bool down);
     void menuSelect(bool into);
@@ -69,6 +91,8 @@ private:
     uint8_t bcLen;
 
     void render();
+    void renderSetupState();
+    void renderCommand();
     void renderMenu();
     void printMenuItem(int8_t menuIx);
     void renderColorSelect();

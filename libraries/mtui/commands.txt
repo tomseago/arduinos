@@ -1,0 +1,97 @@
+111 X All Off
+112 X
+113 X
+121   Goto Menu
+122 X
+123   Goto Registers
+131   Goto Color
+132   Select Brightness
+133 X
+
+211 X
+212   Faster
+213   Slower
+221 X
+222 X
+223 X
+231   Next Anim?
+232   Select Anim
+233 X
+
+311 X
+312   Anim: H Rainbow
+313   Anim: Flood
+321   Anim: Rand Mover
+322 X Anim: Rand All
+323   Anim: Rand Bright
+331 X Anim: Tracer
+332 X
+333 X
+
+
+#########
+# Anim select mode
+
+111 X 
+112 X
+113 X
+121   
+122 X
+123   No Change
+131   
+132   
+133 X
+
+211 X
+212 
+213 
+221 X
+222 X
+223 X
+231   
+232   
+233 X
+
+311 X
+312   Anim: H Rainbow
+313   Anim: Flood
+321   Anim: Rand Mover
+322 X Anim: Rand All
+323   Anim: Rand Bright
+331 X Anim: Tracer
+332 X
+333 X
+
+
+#########
+# Brightness select mode
+
+111 X 
+112 X
+113 X
+121   
+122 X
+123   No Change
+131   
+132   
+133 X
+
+211 X
+212 
+213 
+221 X
+222 X
+223 X
+231   
+232   
+233 X
+
+311 X
+312     75  (192)
+313     100  (255)
+321     25  (64)
+322 X 
+323     50  (128)
+331 X 
+332 X
+333 X

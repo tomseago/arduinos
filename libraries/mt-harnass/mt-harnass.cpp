@@ -29,8 +29,8 @@ void writeDebugNums(uint32_t a, uint32_t b) {
 ///////////
 
 MTHarnass::MTHarnass(uint8_t sashPin, uint8_t armPin) 
-    : sash(24, sashPin, NEO_GRB + NEO_KHZ800),
-      arm(32, armPin, armPin+1)
+    : sash(SASH_COUNT, sashPin, NEO_GRB + NEO_KHZ800),
+      arm(ARM_COUNT, armPin, armPin+1)
 {
     memset(&animParams, 0, sizeof(animParams_t));
 
@@ -238,24 +238,60 @@ void MTHarnass::h6Stripe(uint32_t color, uint8_t stripe, uint8_t flags) {
 
 // If the number is in the range of 56 to 111 it will be mapped in
 // the opposite direction, so pixel 56 is the same as 54.
-void MTHarnass::setMappedPixelColor(int8_t pixelNum, uint32_t color) {
+void MTHarnass::setMappedPixelColor(int8_t pixelNum, uint32_t color, frame_t frame) {
 
     if (pixelNum < 0) {
-        pixelNum += 55;
-        pixelNum = 56 - pixelNum + 1;
+        pixelNum += (SASH_COUNT + ARM_COUNT);
+        pixelNum = (SASH_COUNT + ARM_COUNT) - pixelNum + 1;
     }
 
-    if (pixelNum > 111) return;
+    if (pixelNum > (2 * (SASH_COUNT + ARM_COUNT) - 1)) return;
 
-    if (pixelNum > 55) {
-        pixelNum -= 55;
-        pixelNum = 56 - pixelNum - 1;
+    if (pixelNum > (SASH_COUNT + ARM_COUNT - 1)) {
+        pixelNum -= (SASH_COUNT + ARM_COUNT - 1);
+        pixelNum = (SASH_COUNT + ARM_COUNT - 1) - pixelNum;
     }
 
-    if (pixelNum < 32) {
-        arm.setPixelColorRGB(pixelNum, color);
+    if (pixelNum < ARM_COUNT) {
+        setPixelColor(TRUE, pixelNum, color, frame);
+        // setArmPixel(pixelNum, color, frame);
+        // arm.setPixelColorRGB(pixelNum, color);
     } else {
-        sash.setPixelColor(pixelNum - 32, color);
+        setPixelColor(FALSE, pixelNum - ARM_COUNT, color, frame);
+        // sash.setPixelColor(pixelNum - ARM_COUNT, color);
+    }
+}
+
+void MTHarnass::setPixelColor(bool isArm, uint8_t num, uint32_t color, frame_t frame) {   
+    uint8_t *frameToSet = NULL;
+
+    switch(frame) {
+        case FRAME_CURRENT:
+            if (isArm) {
+                arm.setPixelColorRGB(num, color);                
+            } else {
+                sash.setPixelColor(num, color);
+            }
+            break;
+
+        case FRAME_LAST:
+            frameToSet = lastFrame;
+            break;
+
+        case FRAME_NEXT:
+            frameToSet = nextFrame;
+            break;
+    }
+
+    if (frameToSet) {
+        if (!isArm) {
+            num += ARM_COUNT;
+        }
+
+        num *= 3;
+        frameToSet[num++] = (color >> 16) & 0xff;
+        frameToSet[num++] = (color >>  8) & 0xff;
+        frameToSet[num] = color & 0xff;
     }
 }
 
@@ -330,6 +366,12 @@ void MTHarnass::resetSpeed() {
 void MTHarnass::updateSpeed() {
 
     adjustedFrameLength = (speedMultiplier * (animParams.frameLength << 8)) >> 16;
+}
+
+// This isn't strictly needed since everything is public...
+void MTHarnass::brightness(uint8_t val) {
+    sash.setBrightness(val);
+    arm.setBrightness(val);
 }
 
 void MTHarnass::brighter(uint8_t val) {

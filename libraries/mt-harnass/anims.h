@@ -108,7 +108,7 @@ void MTHarnass::RAND_MOVER_drawFrame() {
 
 		// Turn off current before we move
 		if (!ui.regB) {
-			setMappedPixelColor((animReg & 0x00FF), 0);
+			setMappedPixelColor((animReg & 0x00FF), 0, FRAME_CURRENT);
 		}
 		animReg = next | ( dir << 8);
 	}
@@ -124,7 +124,7 @@ void MTHarnass::RAND_MOVER_drawFrame() {
 
 
 	// TODO: Animate the color??
-	setMappedPixelColor((animReg & 0x00FF), animColor);
+	setMappedPixelColor((animReg & 0x00FF), animColor, FRAME_CURRENT);
 }
 
 
@@ -137,8 +137,8 @@ void MTHarnass::TRACER_setup() {
 
 void MTHarnass::TRACER_drawFrame() {
 
-	setMappedPixelColor(animParams.currentFrame - 1, 0);
-	setMappedPixelColor(animParams.currentFrame, selectedColor);
+	setMappedPixelColor(animParams.currentFrame - 1, 0, FRAME_CURRENT);
+	setMappedPixelColor(animParams.currentFrame, selectedColor, FRAME_CURRENT);
 }
 
 void MTHarnass::RAND_ALL_setup() {
@@ -150,7 +150,7 @@ void MTHarnass::RAND_ALL_setup() {
 
 void MTHarnass::RAND_ALL_drawFrame() {
 	for(int i=0; i<56; i++) {
-		setMappedPixelColor(i, colorWheel(random(255)));
+		setMappedPixelColor(i, colorWheel(random(255)), FRAME_CURRENT);
 	}
 
 }
@@ -177,7 +177,7 @@ void MTHarnass::RAND_BRIGHT_drawFrame() {
 		b = (b * brightness) >> 8;
 
 		c = (r<<16) + (g<<8) + b;
-		setMappedPixelColor(i, c);
+		setMappedPixelColor(i, c, FRAME_CURRENT);
 	}
 
 

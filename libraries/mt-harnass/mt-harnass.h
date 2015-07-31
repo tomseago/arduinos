@@ -13,6 +13,17 @@
 
 #define ANIM_SIG(x) void x##_setup(); void x##_drawFrame();
 
+#define SASH_COUNT  24
+#define ARM_COUNT   32
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
 enum animName_t {
 	ANIM_NONE = 0
 
@@ -36,6 +47,12 @@ struct animParams_t {
 	uint32_t frameLength;
 };
 
+
+enum frame_t {
+    FRAME_CURRENT = 0,
+    FRAME_LAST,
+    FRAME_NEXT
+};
 
 class MTHarnass {
 
@@ -61,6 +78,9 @@ public:
 
     int32_t speedMultiplier = 0x0100; // Start at 1 * 256
 
+    uint8_t lastFrame[ (SASH_COUNT + ARM_COUNT) * 3 ];
+    uint8_t nextFrame[ (SASH_COUNT + ARM_COUNT) * 3 ];
+
     MTHarnass(uint8_t sashPin, uint8_t armPin);
 
     void begin();
@@ -74,7 +94,8 @@ public:
     void solidArm(uint32_t color);
     void solidColor(uint8_t r, uint8_t g, uint8_t b, uint8_t flags);
     void h6Stripe(uint32_t color, uint8_t stripe, uint8_t flags);
-    void setMappedPixelColor(int8_t pixelNum, uint32_t color);
+    void setMappedPixelColor(int8_t pixelNum, uint32_t color, frame_t frame);
+    void setPixelColor(bool isArm, uint8_t num, uint32_t color, frame_t frame);
 
     void startAnimation(animName_t animNum);
 
@@ -83,6 +104,7 @@ public:
     void resetSpeed();
     void updateSpeed();
 
+    void brightness(uint8_t val);
     void brighter(uint8_t val);
     void darker(uint8_t val);
 
