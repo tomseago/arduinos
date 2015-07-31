@@ -59,17 +59,23 @@ void MTHarnass::loop() {
     if (animParams.totalFrames != 0 && animParams.frameLength != 0) {
         // Which frame SHOULD we be on?
 
-        uint32_t elapsedTime = millis() - animParams.startedAt;
+        uint32_t elapsedTime = now - animParams.startedAt;
         // Using millis so ignoring rollover. Gives us 70 days or so.
 
-        uint32_t nextFrame = (elapsedTime / adjustedFrameLength) % animParams.totalFrames;
+        uint32_t nextFrameTime = (elapsedTime / adjustedFrameLength) % animParams.totalFrames;
 
         writeDebugNums(animParams.currentFrame, animParams.totalFrames);
 
         // TODO: Add a check to make sure we don't do this
         // for infinity?? Like only skip a couple of frames
         // and then move on.
-        while(animParams.currentFrame != nextFrame) {
+        bool updatedFrames = FALSE;
+        while(animParams.currentFrame != nextFrameTime) {
+
+            if (animParams.wantsFades) {
+                // Move the next to last
+                memcpy(lastFrame, nextFrame, sizeof(lastFrame));
+            }
 
             switch(currentAnim) {
                 case ANIM_ALL_BLINK:
@@ -92,6 +98,47 @@ void MTHarnass::loop() {
             // TODO: Add the ability to reverse direction?
             if (animParams.currentFrame >= animParams.totalFrames) {
                 animParams.currentFrame = 0;
+            }
+            updatedFrames = TRUE;
+        }
+        if (animParams.wantsFades) {
+            if (updatedFrames) {
+                // Just write out the old one
+                // TODO: memcpy eh???
+
+                // Arm is before sash                
+                for(int i=0, offset=0; i<ARM_COUNT; i++, offset += 3) {
+                    arm.setPixelColor(i, lastFrame[offset], lastFrame[offset+1], lastFrame[offset+2]);
+                }
+
+                for(int i=0, offset=(ARM_COUNT*3); i<SASH_COUNT; i++, offset += 3) {
+                    sash.setPixelColor(i, lastFrame[offset], lastFrame[offset+1], lastFrame[offset+2]);
+                }
+                lastFrameAt = now;
+            } else {
+                // Interpolate between old frame time and now
+
+                uint16_t multi = ((now - lastFrameAt) << 8) / adjustedFrameLength;
+
+                // Arm is before sash                
+                for(int i=0, offset=0; i<ARM_COUNT; i++, offset += 3) {
+                    arm.setPixelColor(i, 
+                        lastFrame[offset] + ( ( (nextFrame[offset] - lastFrame[offset]) * multi ) >> 8 ),
+                        lastFrame[offset+1] + ( ( (nextFrame[offset+1] - lastFrame[offset+1]) * multi ) >> 8 ),
+                        lastFrame[offset+2] + ( ( (nextFrame[offset+2] - lastFrame[offset+2]) * multi ) >> 8 )
+
+                        );
+                }
+
+                for(int i=0, offset=(ARM_COUNT*3); i<SASH_COUNT; i++, offset += 3) {
+                    sash.setPixelColor(i, 
+                        lastFrame[offset] + ( ( (nextFrame[offset] - lastFrame[offset]) * multi ) >> 8 ),
+                        lastFrame[offset+1] + ( ( (nextFrame[offset+1] - lastFrame[offset+1]) * multi ) >> 8 ),
+                        lastFrame[offset+2] + ( ( (nextFrame[offset+2] - lastFrame[offset+2]) * multi ) >> 8 )
+
+                        );
+                }
+
             }
         }
     }
@@ -179,40 +226,64 @@ void MTHarnass::h6Stripe(uint32_t color, uint8_t stripe, uint8_t flags) {
     if (flags & F_SASH) {
         switch(stripe) {
             case 0:
-                sash.setPixelColor(0, color);
-                sash.setPixelColor(1, color);
-                sash.setPixelColor(2, color);
-                sash.setPixelColor(3, color);
+                setPixelColor(FALSE, 0, color, flags);
+                setPixelColor(FALSE, 1, color, flags);
+                setPixelColor(FALSE, 2, color, flags);
+                setPixelColor(FALSE, 3, color, flags);
+                // sash.setPixelColor(0, color);
+                // sash.setPixelColor(1, color);
+                // sash.setPixelColor(2, color);
+                // sash.setPixelColor(3, color);
                 break;
             case 1:
-                sash.setPixelColor(4, color);
-                sash.setPixelColor(5, color);
-                sash.setPixelColor(6, color);
+                setPixelColor(FALSE, 4, color, flags);
+                setPixelColor(FALSE, 5, color, flags);
+                setPixelColor(FALSE, 6, color, flags);
+                // sash.setPixelColor(4, color);
+                // sash.setPixelColor(5, color);
+                // sash.setPixelColor(6, color);
                 break;
             case 2:
-                sash.setPixelColor(7, color);
-                sash.setPixelColor(8, color);
-                sash.setPixelColor(10, color);
-                sash.setPixelColor(11, color);
+                setPixelColor(FALSE, 7, color, flags);
+                setPixelColor(FALSE, 8, color, flags);
+                setPixelColor(FALSE, 10, color, flags);
+                setPixelColor(FALSE, 11, color, flags);
+                // sash.setPixelColor(7, color);
+                // sash.setPixelColor(8, color);
+                // sash.setPixelColor(10, color);
+                // sash.setPixelColor(11, color);
                 break;
             case 3:
-                sash.setPixelColor(9, color);
-                sash.setPixelColor(12, color);
-                sash.setPixelColor(14, color);
-                sash.setPixelColor(13, color);
+                setPixelColor(FALSE, 9, color, flags);
+                setPixelColor(FALSE, 12, color, flags);
+                setPixelColor(FALSE, 14, color, flags);
+                setPixelColor(FALSE, 13, color, flags);
+                // sash.setPixelColor(9, color);
+                // sash.setPixelColor(12, color);
+                // sash.setPixelColor(14, color);
+                // sash.setPixelColor(13, color);
                 break;
             case 4:
-                sash.setPixelColor(15, color);
-                sash.setPixelColor(16, color);
-                sash.setPixelColor(17, color);
-                sash.setPixelColor(18, color);
-                sash.setPixelColor(19, color);
+                setPixelColor(FALSE, 15, color, flags);
+                setPixelColor(FALSE, 16, color, flags);
+                setPixelColor(FALSE, 17, color, flags);
+                setPixelColor(FALSE, 18, color, flags);
+                setPixelColor(FALSE, 19, color, flags);
+                // sash.setPixelColor(15, color);
+                // sash.setPixelColor(16, color);
+                // sash.setPixelColor(17, color);
+                // sash.setPixelColor(18, color);
+                // sash.setPixelColor(19, color);
                 break;
             case 5:
-                sash.setPixelColor(20, color);
-                sash.setPixelColor(21, color);
-                sash.setPixelColor(22, color);
-                sash.setPixelColor(23, color);
+                setPixelColor(FALSE, 20, color, flags);
+                setPixelColor(FALSE, 21, color, flags);
+                setPixelColor(FALSE, 22, color, flags);
+                setPixelColor(FALSE, 23, color, flags);
+                // sash.setPixelColor(20, color);
+                // sash.setPixelColor(21, color);
+                // sash.setPixelColor(22, color);
+                // sash.setPixelColor(23, color);
                 break;
         }
     }
@@ -228,7 +299,8 @@ void MTHarnass::h6Stripe(uint32_t color, uint8_t stripe, uint8_t flags) {
         }
 
         for(uint8_t i=low; i<high; i++) {
-            arm.setPixelColorRGB(i, color);
+            setPixelColor(TRUE, i, color, flags);
+            // arm.setPixelColorRGB(i, color);
         }
     }
 }
@@ -238,7 +310,7 @@ void MTHarnass::h6Stripe(uint32_t color, uint8_t stripe, uint8_t flags) {
 
 // If the number is in the range of 56 to 111 it will be mapped in
 // the opposite direction, so pixel 56 is the same as 54.
-void MTHarnass::setMappedPixelColor(int8_t pixelNum, uint32_t color, frame_t frame) {
+void MTHarnass::setMappedPixelColor(int8_t pixelNum, uint32_t color, uint8_t flags) {
 
     if (pixelNum < 0) {
         pixelNum += (SASH_COUNT + ARM_COUNT);
@@ -253,34 +325,28 @@ void MTHarnass::setMappedPixelColor(int8_t pixelNum, uint32_t color, frame_t fra
     }
 
     if (pixelNum < ARM_COUNT) {
-        setPixelColor(TRUE, pixelNum, color, frame);
+        setPixelColor(TRUE, pixelNum, color, flags);
         // setArmPixel(pixelNum, color, frame);
         // arm.setPixelColorRGB(pixelNum, color);
     } else {
-        setPixelColor(FALSE, pixelNum - ARM_COUNT, color, frame);
+        setPixelColor(FALSE, pixelNum - ARM_COUNT, color, flags);
         // sash.setPixelColor(pixelNum - ARM_COUNT, color);
     }
 }
 
-void MTHarnass::setPixelColor(bool isArm, uint8_t num, uint32_t color, frame_t frame) {   
+void MTHarnass::setPixelColor(bool isArm, uint8_t num, uint32_t color, uint8_t flags) {   
     uint8_t *frameToSet = NULL;
 
-    switch(frame) {
-        case FRAME_CURRENT:
-            if (isArm) {
-                arm.setPixelColorRGB(num, color);                
-            } else {
-                sash.setPixelColor(num, color);
-            }
-            break;
-
-        case FRAME_LAST:
-            frameToSet = lastFrame;
-            break;
-
-        case FRAME_NEXT:
-            frameToSet = nextFrame;
-            break;
+    if (flags & F_LAST) {
+        frameToSet = lastFrame;
+    } else if (flags & F_NEXT) {
+        frameToSet = nextFrame;
+    } else {
+        if (isArm) {
+            arm.setPixelColorRGB(num, color);                
+        } else {
+            sash.setPixelColor(num, color);
+        }
     }
 
     if (frameToSet) {

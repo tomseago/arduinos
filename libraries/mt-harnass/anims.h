@@ -4,6 +4,7 @@
 #define ANIM_START(name, frames, len) void MTHarnass::name##_setup() { \
     animParams.totalFrames = frames; \
     animParams.frameLength = len; \
+    animParams.wantsFades = FALSE; \
  }\
  void MTHarnass::name##_drawFrame(){\
     switch(animParams.currentFrame) {\
@@ -43,9 +44,34 @@ void MTHarnass::BLINK_drawFrame() {
 	//h6Stripe(rainbow6[0], 0, F_BOTH);
 }
 
+// void MTHarnass::HRAINBOW_setup() {
+// 	animParams.totalFrames = 6;
+// 	animParams.frameLength = 300;
+
+// 	// Color offset
+// 	animColor = 0;
+// }
+
+// void MTHarnass::HRAINBOW_drawFrame() {
+
+// 	char offset = animColor;
+// 	for(int i=0; i<6; i++) {
+// 		h6Stripe(rainbow6[offset], i, F_BOTH);
+// 		offset++;
+// 		if (offset >= 6) {
+// 			offset = 0;
+// 		}
+// 	}
+// 	animColor++;
+// 	if (animColor >= 6) {
+// 		animColor = 0;
+// 	}
+// }
+
 void MTHarnass::HRAINBOW_setup() {
 	animParams.totalFrames = 6;
 	animParams.frameLength = 300;
+	animParams.wantsFades = TRUE;
 
 	// Color offset
 	animColor = 0;
@@ -55,7 +81,11 @@ void MTHarnass::HRAINBOW_drawFrame() {
 
 	char offset = animColor;
 	for(int i=0; i<6; i++) {
-		h6Stripe(rainbow6[offset], i, F_BOTH);
+		// if (offset == 0 || offset == 3) {
+			h6Stripe(rainbow6[offset], i, F_BOTH | F_NEXT);
+		// } else {
+		// 	h6Stripe(0, i, F_BOTH | F_NEXT);			
+		// }
 		offset++;
 		if (offset >= 6) {
 			offset = 0;
@@ -66,6 +96,7 @@ void MTHarnass::HRAINBOW_drawFrame() {
 		animColor = 0;
 	}
 }
+
 
 void MTHarnass::RAND_MOVER_setup() {
 	animParams.totalFrames = 2;
@@ -108,7 +139,7 @@ void MTHarnass::RAND_MOVER_drawFrame() {
 
 		// Turn off current before we move
 		if (!ui.regB) {
-			setMappedPixelColor((animReg & 0x00FF), 0, FRAME_CURRENT);
+			setMappedPixelColor((animReg & 0x00FF), 0, F_CURRENT);
 		}
 		animReg = next | ( dir << 8);
 	}
@@ -124,7 +155,7 @@ void MTHarnass::RAND_MOVER_drawFrame() {
 
 
 	// TODO: Animate the color??
-	setMappedPixelColor((animReg & 0x00FF), animColor, FRAME_CURRENT);
+	setMappedPixelColor((animReg & 0x00FF), animColor, F_CURRENT);
 }
 
 
@@ -137,8 +168,8 @@ void MTHarnass::TRACER_setup() {
 
 void MTHarnass::TRACER_drawFrame() {
 
-	setMappedPixelColor(animParams.currentFrame - 1, 0, FRAME_CURRENT);
-	setMappedPixelColor(animParams.currentFrame, selectedColor, FRAME_CURRENT);
+	setMappedPixelColor(animParams.currentFrame - 1, 0, F_CURRENT);
+	setMappedPixelColor(animParams.currentFrame, selectedColor, F_CURRENT);
 }
 
 void MTHarnass::RAND_ALL_setup() {
@@ -150,7 +181,7 @@ void MTHarnass::RAND_ALL_setup() {
 
 void MTHarnass::RAND_ALL_drawFrame() {
 	for(int i=0; i<56; i++) {
-		setMappedPixelColor(i, colorWheel(random(255)), FRAME_CURRENT);
+		setMappedPixelColor(i, colorWheel(random(255)), F_CURRENT);
 	}
 
 }
@@ -177,7 +208,7 @@ void MTHarnass::RAND_BRIGHT_drawFrame() {
 		b = (b * brightness) >> 8;
 
 		c = (r<<16) + (g<<8) + b;
-		setMappedPixelColor(i, c, FRAME_CURRENT);
+		setMappedPixelColor(i, c, F_CURRENT);
 	}
 
 

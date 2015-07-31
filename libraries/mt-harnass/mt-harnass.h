@@ -11,6 +11,12 @@
 
 #define F_BOTH (F_SASH | F_ARM)
 
+#define F_CURRENT 0
+#define F_LAST (1 << 2)
+#define F_NEXT (1 << 3)
+
+
+
 #define ANIM_SIG(x) void x##_setup(); void x##_drawFrame();
 
 #define SASH_COUNT  24
@@ -45,14 +51,10 @@ struct animParams_t {
 
 	uint32_t totalFrames;
 	uint32_t frameLength;
+
+    bool wantsFades;
 };
 
-
-enum frame_t {
-    FRAME_CURRENT = 0,
-    FRAME_LAST,
-    FRAME_NEXT
-};
 
 class MTHarnass {
 
@@ -80,6 +82,7 @@ public:
 
     uint8_t lastFrame[ (SASH_COUNT + ARM_COUNT) * 3 ];
     uint8_t nextFrame[ (SASH_COUNT + ARM_COUNT) * 3 ];
+    uint32_t lastFrameAt;
 
     MTHarnass(uint8_t sashPin, uint8_t armPin);
 
@@ -94,8 +97,8 @@ public:
     void solidArm(uint32_t color);
     void solidColor(uint8_t r, uint8_t g, uint8_t b, uint8_t flags);
     void h6Stripe(uint32_t color, uint8_t stripe, uint8_t flags);
-    void setMappedPixelColor(int8_t pixelNum, uint32_t color, frame_t frame);
-    void setPixelColor(bool isArm, uint8_t num, uint32_t color, frame_t frame);
+    void setMappedPixelColor(int8_t pixelNum, uint32_t color, uint8_t flags);
+    void setPixelColor(bool isArm, uint8_t num, uint32_t color, uint8_t flags);
 
     void startAnimation(animName_t animNum);
 
