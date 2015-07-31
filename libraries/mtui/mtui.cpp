@@ -7,11 +7,15 @@ extern MTHarnass harnass;
 #include "stdio.h"
 #include "string.h"
 
+
+
 #define MENU_TOP    0
 #define MENU_COLORS 1
 #define MENU_ANIMS  2
+#define MENU_SPEED  3
 
-uint8_t const menuMax[] = { 4, 11, 2 };
+// This is actually number plus 1 :(
+uint8_t const menuMax[] = { 6, 13, 8, 5 };
 
 #define SETUP_STATE_ONE   1
 #define SETUP_STATE_TWO   2
@@ -21,7 +25,8 @@ uint8_t const menuMax[] = { 4, 11, 2 };
 
 MTUI::MTUI(uint8_t pin) 
     : pin(pin), registeredButton(0), setupState(SETUP_STATE_ONE),
-    refOne(500), refTwo(500), refThree(500) {
+    refOne(500), refTwo(500), refThree(500),
+    inputMode(MODE_MENU) {
 
 }
 
@@ -151,7 +156,10 @@ void MTUI::registerButton() {
               refThree = refThree + ((d - refThree)/2);
             }
             setupState = SETUP_STATE_COMPLETE;
-            renderMenu();
+
+            harnass.startAnimation(ANIM_RAND_BRIGHT);
+
+            render();
             break;
 
 
@@ -226,30 +234,102 @@ void MTUI::singleClick() {
     //     return;
     // }
 
-    // Menu mode
-    switch(lastButton) {
-    case 1: // closest to thumb
-        // up
-        menuMove(false);
-        break;
+    switch(inputMode) {
+        case MODE_MENU:
+            // Menu mode
+            switch(lastButton) {
+            case 1: // closest to thumb
+                // up
+                menuMove(false);
+                break;
 
-    case 2:
-        // down
-        menuMove(true);
-        break;
+            case 2:
+                // down
+                menuMove(true);
+                break;
 
-    case 3: 
-        // select / right
-        menuSelect(true);
-        break;
+            case 3: 
+                // select / right
+                menuSelect(true);
+                break;
 
-    case 4: // furthest from thumb
-        // back / left
-        menuSelect(false);
-        break;
+            case 4: // furthest from thumb
+                // back / left
+                menuSelect(false);
+                break;
+            }
+            break; // MODE_MENU
+
+        case MODE_COLOR_SELECT:
+            switch(lastButton) {
+                case 1:
+                    harnass.changeColorPos(32);
+                    break;
+                case 2:
+                    harnass.changeColorPos(-32);
+                    break;
+                case 3:
+                    harnass.changeColorPos(2);
+                    break;
+                case 4:
+                    inputMode = MODE_MENU;
+                    break;
+            }
+            break; // MODE_COLOR_SELECT
+
+        case MODE_BRIGHTNESS:
+            switch(lastButton) {
+                case 1:
+                    harnass.brighter(32);
+                    break;
+                case 2:
+                    harnass.darker(32);
+                    break;
+                case 3:
+                    harnass.muted = !harnass.muted;
+                    break;
+                case 4:
+                    inputMode = MODE_MENU;
+                    break;
+            }
+            break; // MODE_BRIGHTNESS
+
+        case MODE_REGISTERS:
+            if (!inShiftMode) {
+                // No shift
+                if (lastButton < 4) {
+                    regMomentary = lastButton;
+                } else {
+                    inShiftMode = true;
+                }
+            } else {
+                // Shift
+                switch(lastButton) {
+                    case 1:
+                        // harnass.solidColor(128,0,0,F_ARM);
+                        regA = !regA;
+                        break;
+                    case 2:
+                        // harnass.solidColor(0,128,0,F_ARM);
+                        regB = !regB;
+                        break;
+                    case 3:
+                        // harnass.solidColor(0,0,128,F_ARM);
+                        regC = !regC;
+                        break;
+                    case 4:
+                        // Out of register mode
+                        inputMode = MODE_MENU;
+                        break;
+                }
+                if (lastButton > 0) {
+                    inShiftMode = false;
+                }
+            }
+            break; // MODE_REGISTERS
     }
 
-    renderMenu();
+    render();
 }
 
 void MTUI::menuMove(bool down) {
@@ -271,11 +351,30 @@ void MTUI::menuSelect(bool into) {
         case MENU_TOP:
             switch(menuCursor) {
             case 0:
-                navigateTo(MENU_ANIMS);
+                inputMode = MODE_REGISTERS;
+                renderRegisters();
                 break;
 
             case 1:
+                inputMode = MODE_COLOR_SELECT;
+                renderColorSelect();
+                break;
+
+            case 2:
+                navigateTo(MENU_ANIMS);
+                break;
+
+            case 3:
+                navigateTo(MENU_SPEED);
+                break;
+
+            case 4:
                 navigateTo(MENU_COLORS);
+                break;
+
+            case 5:
+                inputMode = MODE_BRIGHTNESS;
+                renderBrightness();
                 break;
             }
             break;
@@ -290,12 +389,37 @@ void MTUI::menuSelect(bool into) {
                 harnass.startAnimation(ANIM_ALL_BLINK);
                 break;
 
+            case 2:
+                harnass.startAnimation(ANIM_FLOOD);
+                break;
+
+            case 3:
+                harnass.startAnimation(ANIM_HRAINBOW);
+                break;
+
+            case 4:
+                harnass.startAnimation(ANIM_TRACER);
+                break;
+
+            case 5:
+                harnass.startAnimation(ANIM_RAND_MOVER);
+                break;
+
+            case 6:
+                harnass.startAnimation(ANIM_RAND_ALL);
+                break;
+
+            case 7:
+                harnass.startAnimation(ANIM_RAND_BRIGHT);
+                break;
+
+
             }
             break;
 
         case MENU_COLORS:
             harnass.startAnimation(ANIM_NONE);
-            
+
             switch(menuCursor) {
             case 0: // Red
                 harnass.solidColor(255, 0, 0, F_BOTH);
@@ -340,14 +464,51 @@ void MTUI::menuSelect(bool into) {
             case 10: // Magenta
                 harnass.solidColor(255, 0, 255, F_BOTH);
                 break;
+
+            case 11: // White
+                harnass.solidColor(255, 255, 255, F_BOTH);
+                break;
+
+            case 12: // Black
+                harnass.solidColor(0, 0, 0, F_BOTH);
+                break;
+            }
+            break;
+
+        case MENU_SPEED:
+            switch(menuCursor) {
+            case 0:
+                harnass.resetSpeed();
+                break;
+
+            case 1:
+                harnass.changeSpeed(-80);
+                break;
+
+            case 2:
+                harnass.changeSpeed(80);
+                break;
+
+            case 3:
+                harnass.changeSpeed(-25);
+                break;
+
+            case 4:
+                harnass.changeSpeed(25);
+                break;
+
             }
             break;
         }
+
     } else {
         if (bcLen > 0) {
             uint16_t c = popCrumb();
             menuNum = c >> 8 & 0x00ff;
             menuCursor = c & 0x00ff;
+        } else {
+            // On top menu reset to beginning item
+            menuCursor = 0;
         }
     }
 }
@@ -371,6 +532,27 @@ uint16_t MTUI::popCrumb() {
 }
 
 
+void MTUI::render() {
+
+    switch(inputMode) {
+        case MODE_MENU:
+            renderMenu();
+            break;
+
+        case MODE_COLOR_SELECT:
+            renderColorSelect();
+            break;
+
+        case MODE_REGISTERS:
+            renderRegisters();
+            break;
+
+        case MODE_BRIGHTNESS:
+            renderBrightness();
+            break;
+    }
+}
+
 void MTUI::renderMenu() {
     uView.clear(PAGE);
 
@@ -386,6 +568,10 @@ void MTUI::renderMenu() {
 
         case MENU_ANIMS:
             uView.print("Anims");
+            break;
+
+        case MENU_SPEED:
+            uView.print("Speed");
             break;
     }
 
@@ -414,20 +600,29 @@ void MTUI::printMenuItem(int8_t menuIx) {
     switch(menuNum) {
     case MENU_TOP:
         switch(menuIx) {
+
         case 0:
-            uView.print("Animations");
+            uView.print(">Registers");
             break;
 
         case 1:
-            uView.print("Colors");
+            uView.print(">Color");
             break;
 
         case 2:
-            uView.print("Fast Shows");
+            uView.print("Animations");
             break;
 
         case 3:
-            uView.print("Settings");
+            uView.print("Speed");
+            break;
+
+        case 4:
+            uView.print("Colors");
+            break;
+
+        case 5:
+            uView.print(">Brightness");
             break;
         }
         break;
@@ -440,6 +635,30 @@ void MTUI::printMenuItem(int8_t menuIx) {
 
         case 1:
             uView.print("All Blink");
+            break;
+
+        case 2:
+            uView.print("Flood");
+            break;
+
+        case 3:
+            uView.print("H Rainbow");
+            break;
+
+        case 4:
+            uView.print("Tracer");
+            break;
+
+        case 5:
+            uView.print("Rand Mover");
+            break;
+
+        case 6:
+            uView.print("Rand All");
+            break;
+
+        case 7:
+            uView.print("Rand Bright");
             break;
         }
         break;
@@ -488,9 +707,105 @@ void MTUI::printMenuItem(int8_t menuIx) {
         case 10:
             uView.print("Magenta");
             break;
+
+        case 11:
+            uView.print("White");
+            break;
+
+        case 12:
+            uView.print("Black");
+            break;
         }
-        break;
+        break;// END MENU_COLORS
+
+        case MENU_SPEED: 
+            switch(menuIx) {
+            case 0:
+                uView.print("Reset");
+                break;
+
+            case 1:
+                uView.print("++FASTER");
+                break;
+
+            case 2:
+                uView.print("--SLOWER");
+                break;
+
+            case 3:
+                uView.print("fast");
+                break;
+
+            case 4:
+                uView.print("slower");
+                break;
+            }
+            break; // END MENU_SPEED
 
     }
 
+
+
+
+}
+
+
+
+void MTUI::renderColorSelect() {
+    uView.clear(PAGE);
+
+    uView.setCursor(0,0);
+
+    char buf[10];
+
+    sprintf(buf, "R: %.3d", (harnass.selectedColor >> 16) & 0xff);
+    uView.setCursor(0,0); uView.print(buf);
+
+    sprintf(buf, "G: %.3d", (harnass.selectedColor >> 8) & 0xff);
+    uView.setCursor(0,10); uView.print(buf);
+    
+    sprintf(buf, "B: %.3d", (harnass.selectedColor     ) & 0xff);
+    uView.setCursor(0,20); uView.print(buf);
+    
+
+    uView.display();
+
+}
+
+void MTUI::renderRegisters() {
+    uView.clear(PAGE);
+
+    uView.setCursor(0,0);
+
+    char buf[10];
+
+    uView.setCursor(0,0); uView.print("Registers");
+
+    sprintf(buf, "%d", regMomentary);
+    uView.setCursor(0,20); uView.print(buf);
+
+    if (regA) {
+        uView.setCursor(8, 28); uView.print("A");
+    }
+    if (regB) {
+        uView.setCursor(18, 28); uView.print("B");
+    }
+    if (regC) {
+        uView.setCursor(28, 28); uView.print("C");
+    }
+
+    uView.display();
+
+}
+
+void MTUI::renderBrightness() {
+    uView.clear(PAGE);
+
+
+    char buf[10];
+
+    uView.setCursor(0,0); uView.print("Brightness");
+
+    sprintf(buf, "%d", harnass.sash.getBrightness());
+    uView.setCursor(0,20); uView.print(buf);
 }

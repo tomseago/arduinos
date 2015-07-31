@@ -5,6 +5,12 @@
 
 #include <avr/pgmspace.h>
 
+enum inputMode_t {
+    MODE_MENU = 0,
+    MODE_COLOR_SELECT,
+    MODE_REGISTERS,
+    MODE_BRIGHTNESS
+};
 
 class MTUI {
 
@@ -14,6 +20,14 @@ public:
     void end();
 
     void loop();
+
+    inputMode_t inputMode;
+
+    // Registers for animation use
+    uint8_t regMomentary = 0;
+    bool regA = false;
+    bool regB = false;
+    bool regC = false;
 
 private:
     uint8_t pin;
@@ -29,11 +43,15 @@ private:
     uint8_t lastButton;
     uint8_t registeredButton;
 
+    // For registers
+    bool inShiftMode;
+
     void showDebug();
 
     void registerButton();
     void resetSetupState();
     void renderSetupState();
+
 
     void singleClick();
 
@@ -50,9 +68,14 @@ private:
     uint16_t breadcrumbs[10];
     uint8_t bcLen;
 
+    void render();
     void renderMenu();
     void printMenuItem(int8_t menuIx);
+    void renderColorSelect();
+    void renderRegisters();
 
+    void renderBrightness();
+ 
 };
 
 #endif // #ifndef _MTUI_H_

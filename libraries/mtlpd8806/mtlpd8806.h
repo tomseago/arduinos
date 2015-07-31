@@ -19,6 +19,10 @@ class LPD8806 {
     begin(void),
     setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b),
     setPixelColor(uint16_t n, uint32_t c),
+
+    setPixelColorRGB(uint16_t b, uint32_t c),
+    setBrightness(uint8_t),
+
     show(void),
     updatePins(uint8_t dpin, uint8_t cpin), // Change pins, configurable
     updatePins(void),                       // Change pins, hardware SPI
@@ -35,6 +39,7 @@ class LPD8806 {
     numLEDs,    // Number of RGB LEDs in strip
     numBytes;   // Size of 'pixels' buffer below
   uint8_t
+    brightness,
     *pixels,    // Holds LED color values (3 bytes each) + latch bytes
     clkpin    , datapin;     // Clock & data pin numbers
 #ifdef __AVR__
