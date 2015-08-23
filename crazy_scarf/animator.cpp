@@ -8,9 +8,9 @@ Animator::Animator(Pixels& pix) :
 
 void
 Animator::begin() {
-    pixels.setBrightness(128);
+    //pixels.setBrightness(128);
     
-    startAnimation(ANIM_FLOOD);
+    startAnimation(ANIM_SPARKLE);
 }
 
 
@@ -19,7 +19,7 @@ uint32_t now;
 bool updatedFrames;
 uint32_t nextFrameNum;
 
-#define MAX_ANIMATION_TIME (30 * 1000)
+#define MAX_ANIMATION_TIME (5 * 60 * 1000)
 
 void 
 Animator::loop() {
@@ -66,7 +66,7 @@ Animator::loop() {
         // TODO: Add a check to make sure we don't do this
         // for infinity?? Like only skip a couple of frames
         // and then move on.
-        updatedFrames = false;
+        updatedFrames = FALSE;
         while(animParams.currentFrame != nextFrameNum) {
 
             if (animParams.flags & ANIM_FLAG_WANTS_FADES) {
@@ -91,7 +91,7 @@ Animator::loop() {
             }
             animParams.lastDrawAt = now;
             animParams.elapsedSinceLastDraw = 0;
-            updatedFrames = true;
+            updatedFrames = TRUE;
         }
         if (animParams.flags & ANIM_FLAG_WANTS_FADES) {
             if (updatedFrames) {
@@ -184,3 +184,8 @@ Animator::nextAnimation() {
 }
 
 #include "anims_funcs.h"
+
+
+
+
+
