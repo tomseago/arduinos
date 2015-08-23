@@ -24,6 +24,8 @@ Animator animator = Animator(pixels);
 
 uint32_t start = millis();
 
+SYSTEM_MODE(MANUAL);
+
 void setup() {
 
     animator.begin();
