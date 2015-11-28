@@ -47,12 +47,16 @@ protected:
     	pinMask;       // Output PORT bitmask
 #endif
 
+    // Important to override this for current frame so that
+    // the RGB ordering can be respected for DMA outputs
+    virtual void setPixelInFrame(uint16_t which, uint8_t frame, uint8_t r, uint8_t g, uint8_t b, uint8_t flags);
+
 public:
     WS2812Pixels(uint16_t numPixels, int outputPin, uint8_t type=NEO_GRB + NEO_KHZ800);
 
     virtual void send();
 
-
+    virtual uint32_t getPixel(uint16_t which, uint8_t flags = PF_CURRENT_FRAME);
 };
 
 #endif // _WS2812_PIXELS_H_

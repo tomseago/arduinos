@@ -9,6 +9,26 @@ BikePixels::BikePixels(Pixels& front, Pixels& left, Pixels& right) :
 	numPixels = numFront + left.getNumPixels();
 }
 
+uint16_t 
+BikePixels::getNumPixelsOnChannel(uint8_t channel) {
+	switch(channel) {
+		case 0:
+			return numFront;
+
+		case 1:
+			return left.getNumPixels();
+
+		case 2:
+			return right.getNumPixels();
+	}
+	return 0;
+}
+
+uint8_t 
+BikePixels::getNumChannels() {
+    return 3;
+}
+
 void
 BikePixels::setPixelInFrame(uint16_t which, uint8_t frame, uint8_t r, uint8_t g, uint8_t b, uint8_t flags) {
 

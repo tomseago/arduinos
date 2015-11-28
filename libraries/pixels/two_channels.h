@@ -1,22 +1,21 @@
-#ifndef _BIKE_PIXELS_H_
-#define _BIKE_PIXELS_H_
+#ifndef _TWO_CHANNELS_H_
+#define _TWO_CHANNELS_H_
 
 #include "pixels.h"
 #include <SPI.h>
 
-class BikePixels : public Pixels {
+class TwoChannels : public Pixels {
 
 protected:
-	Pixels& front;
-	Pixels& left;
-	Pixels& right;
+	Pixels& chanA;
+	Pixels& chanB;
 
-	uint16_t numFront;
+	uint16_t numA;
 
     void setPixelInFrame(uint16_t which, uint8_t frame, uint8_t r, uint8_t g, uint8_t b, uint8_t flags);
 
 public:
-    BikePixels(Pixels& front, Pixels& left, Pixels& right);
+    TwoChannels(Pixels& chanA, Pixels& chanB);
 
     virtual uint16_t getNumPixelsOnChannel(uint8_t channel);
     virtual uint8_t getNumChannels();
@@ -33,6 +32,6 @@ public:
     virtual void send();
 };
 
-#endif // _WS2801_PIXELS_H_
+#endif // _TWO_CHANNELS_H_
 
 

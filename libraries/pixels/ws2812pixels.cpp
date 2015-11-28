@@ -33,6 +33,30 @@ WS2812Pixels::WS2812Pixels(uint16_t numPixels, int outputPin, uint8_t type) :
     digitalWrite(outputPin, LOW);
 }
 
+void
+WS2812Pixels::setPixelInFrame(uint16_t which, uint8_t frame, uint8_t r, uint8_t g, uint8_t b, uint8_t flags) {
+
+    int ix = (which * 3) + (frame * numPixels * 3);
+
+    // Basically just use the offset stuff. This could probably
+    // be pushed up into the base class
+    frames[ix+rOffset] = r;
+    frames[ix+gOffset] = g;
+    frames[ix+bOffset] = b;
+}
+
+
+uint32_t 
+WS2812Pixels::getPixel(uint16_t which, uint8_t flags) {
+  uint32_t rgb = Pixels::getPixel(which, flags);
+
+  uint32_t out = 
+    (((rgb >> (rOffset * 8)) & 0x00ff) << 16) +
+    (((rgb >> (gOffset * 8)) & 0x00ff) <<  8) +
+    (((rgb >> (bOffset * 8)) & 0x00ff)      );
+
+  return out;
+}
 
 
 #ifdef ESP8266

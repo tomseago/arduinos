@@ -1,4 +1,14 @@
+/**
+ * This file is the animator class implementation. It brings
+ * in both it's header and then includes the anims_funcs.h file
+ * which has the actual implementations of animations in it.
+ *
+ * The anims_funcs.h file works in conjuction with the anims.h
+ * file to determine which animations are available.
+ */
+
 #include "animator.h"
+#include "rand.h"
 
 Animator::Animator(Pixels& pix) :
     pixels(pix)
@@ -8,7 +18,7 @@ Animator::Animator(Pixels& pix) :
 
 void
 Animator::begin() {
-    pixels.setBrightness(128);
+    //pixels.setBrightness(128);
     
     startAnimation(ANIM_FLOOD);
 }
@@ -19,7 +29,7 @@ uint32_t now;
 bool updatedFrames;
 uint32_t nextFrameNum;
 
-#define MAX_ANIMATION_TIME (30 * 1000)
+#define MAX_ANIMATION_TIME (60 * 60 * 1000)
 
 void 
 Animator::loop() {
@@ -112,6 +122,10 @@ Animator::loop() {
     //     doOverlay();
     // }
 
+    // Set white front light
+    // for(int i=32; i<37; i++) {
+    //     pixels.setPixel(i, 0xffffff, PF_CURRENT_FRAME);
+    // }
 
     // Assume work was done
     pixels.send();

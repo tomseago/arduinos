@@ -221,10 +221,110 @@ void Animator::SPARKLE_drawFrame() {
 }
 
 
+/////////
 ANIM_FSTART(WHITE, 2, 1000, ANIM_FLAG_NONE)
 
     pixels.setAllPixels(255, 255, 255);
 
 ANIM_FEND
+
+
+
+/////////
+void Animator::JORDAN_RUNWAY_setup() {
+    animParams.totalFrames = 1600;
+    animParams.frameLength = 10;
+    animParams.flags = ANIM_FLAG_NONE; // No fades
+    animParams.maxTime = 0; // Run forever
+    animReg = 0;
+}
+
+#define J_FADE_THRESH 5
+#define J_FADE_DOWN 50
+#define J_SPARKLE_THRESH 10
+
+// #define SPARKLE_THE_PIXEL pixels.setPixel(i, 245, 218, 64);
+#define SPARKLE_THE_PIXEL { \
+    switch(rand(4)) { \
+        case 0:\
+            pixels.setPixel(i, 255, 255, 27); \
+            break;\
+        case 1:\
+            pixels.setPixel(i, 64, 255, 218); \
+            break;\
+        case 2:\
+            pixels.setPixel(i, 245, 218, 64); \
+            break;\
+        case 3:\
+            pixels.setPixel(i, 255, 140, 140); \
+            break;\
+    }\
+}
+
+
+void Animator::JORDAN_RUNWAY_drawFrame() {
+
+    // Left first
+    uint8_t fadeVal;
+    uint8_t startPixel;
+    uint8_t maxPixel;
+
+    fadeVal = animReg & 0x000000ff;
+    startPixel = 0;
+    maxPixel = pixels.getNumPixelsOnChannel(0);
+    if (!fadeVal && (rand(2000) < J_FADE_THRESH)) {
+        // Do a fade anyway. IE. Start a burst
+        fadeVal = 255;
+    }
+    if (fadeVal) {
+        // Doing a fade down, so keep doing that
+        fadeVal = (fadeVal > J_FADE_DOWN) ? (fadeVal - J_FADE_DOWN) : 0;
+        animReg = (animReg & 0xffffff00) | fadeVal;
+
+        for(int i=startPixel; i<maxPixel ; i++) {
+            pixels.setPixel(i, 255, 255, 255);
+        }
+    } else {
+        // Regular sparkle
+        for(int i=startPixel; i<maxPixel; i++) {
+
+            // Pixels have a small chance of being lit up
+            if (rand(2000) < J_SPARKLE_THRESH) {
+                SPARKLE_THE_PIXEL
+            } else {
+                pixels.setPixel(i, 0, 0, 0);
+            }
+        }         
+    }
+
+    // Right Side
+    fadeVal = (animReg & 0x0000ff00) >> 8;
+    startPixel = maxPixel;
+    maxPixel = startPixel + pixels.getNumPixelsOnChannel(1);
+    if (!fadeVal && (rand(2000) < J_FADE_THRESH)) {
+        // Do a fade anyway. IE. Start a burst
+        fadeVal = 255;
+    }
+    if (fadeVal) {
+        // Doing a fade down, so keep doing that
+        fadeVal = (fadeVal > J_FADE_DOWN) ? (fadeVal - J_FADE_DOWN) : 0;
+        animReg = (animReg & 0xffff00ff) | (fadeVal<<8);
+
+        for(int i=startPixel; i<maxPixel ; i++) {
+            pixels.setPixel(i, 255, 255, 255);
+        }
+    } else {
+        // Regular sparkle
+        for(int i=startPixel; i<maxPixel; i++) {
+
+            // Pixels have a small chance of being lit up
+            if (rand(2000) < J_SPARKLE_THRESH) {
+                SPARKLE_THE_PIXEL
+            } else {
+                pixels.setPixel(i, 0, 0, 0);
+            }
+        }         
+    }    
+}
 
 #endif //  _ANIM_FUNCS_H_

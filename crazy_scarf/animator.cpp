@@ -10,7 +10,7 @@ void
 Animator::begin() {
     //pixels.setBrightness(128);
     
-    startAnimation(ANIM_SPARKLE);
+    startAnimation(ANIM_BMGMB);
 }
 
 
@@ -175,10 +175,15 @@ Animator::updateSpeed() {
 
 void
 Animator::nextAnimation() {
-    animName_t nextAnim = (animName_t)(currentAnim + 1);
-    if (nextAnim == ANIM_LAST) {
-        nextAnim = (animName_t)(ANIM_NONE + 1);
+    animName_t nextAnim = currentAnim;
+    while(nextAnim == currentAnim) {
+        nextAnim = (animName_t)(1+random(ANIM_LAST-1));
     }
+
+    // animName_t nextAnim = (animName_t)(currentAnim + 1);
+    // if (nextAnim == ANIM_LAST) {
+    //     nextAnim = (animName_t)(ANIM_NONE + 1);
+    // }
     
     startAnimation(nextAnim);
 }

@@ -30,6 +30,8 @@ public:
     ~Pixels();
     
     virtual uint16_t getNumPixels();
+    virtual uint16_t getNumPixelsOnChannel(uint8_t channel);
+    virtual uint8_t getNumChannels();
     
     virtual void setBrightness(uint8_t brightness);
     

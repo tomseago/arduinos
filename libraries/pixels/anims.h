@@ -12,13 +12,14 @@
         ANIM_NONE = 0\
         \
         , ANIM_FLOOD\
-        , ANIM_RAINBOW\
-        , ANIM_BRIGHT_FO\
-        , ANIM_RANDO_FADE\
         , ANIM_SPARKLE\
         \
         , ANIM_LAST\
+        , ANIM_RAINBOW\
+        , ANIM_BRIGHT_FO\
+        , ANIM_RANDO_FADE\
         , ANIM_WHITE\
+        , ANIM_JORDAN_RUNWAY\
     };
     
 
@@ -29,6 +30,8 @@
     ANIM_SIG(RANDO_FADE) \
     ANIM_SIG(SPARKLE) \
     ANIM_SIG(WHITE) \
+    ANIM_SIG(JORDAN_RUNWAY) \
+    
     
 #define ANIMATION_DRAWS \
     ANIM_DRAW(FLOOD) \
@@ -37,6 +40,7 @@
     ANIM_DRAW(RANDO_FADE) \
     ANIM_DRAW(SPARKLE) \
     ANIM_DRAW(WHITE) \
+    ANIM_DRAW(JORDAN_RUNWAY) \
 
 
 #define ANIMATIONS_BEGIN \
@@ -46,6 +50,7 @@
     ANIM_BEGIN(RANDO_FADE) \
     ANIM_BEGIN(SPARKLE) \
     ANIM_BEGIN(WHITE) \
+    ANIM_BEGIN(JORDAN_RUNWAY) \
 
 
 #endif //  _ANIMS_H_

@@ -39,6 +39,19 @@ Pixels::getNumPixels() {
     return numPixels;
 }
 
+uint16_t 
+Pixels::getNumPixelsOnChannel(uint8_t channel) {
+    if (channel > 0) {
+        return 0;
+    }
+    return numPixels;
+}
+
+uint8_t 
+Pixels::getNumChannels() {
+    return 1;
+}
+
 void 
 Pixels::setBrightness(uint8_t brightness) {
     this->brightness = brightness;
