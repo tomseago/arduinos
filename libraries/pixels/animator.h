@@ -13,6 +13,7 @@ ANIMATION_ENUM
 #define ANIM_FLAG_WANTS_FADES        1
 #define ANIM_FLAG_MUTES_BASE         (1 << 1)
 #define ANIM_FLAG_ADVANCE_ON_STOP    (1 << 2)
+#define ANIM_FLAG_SKIP_FIRST_FADE    (1 << 3)
 
 struct animParams_t {
 	uint32_t currentFrame;
@@ -51,6 +52,11 @@ class Animator {
     void nextAnimation();
     
 public:
+    // Because the WS2812 code in particular turns of interrupts,
+    // this timeScaleFactor can be set to something other than 1000
+    // to scale the timing based on how slow millis is running.
+    uint32_t timeScaleFactor;
+
     Animator(Pixels& pix);
 
     void begin();
@@ -59,6 +65,7 @@ public:
     uint32_t colorWheel(uint8_t WheelPos);
 
     void startAnimation(animName_t animNum);
+    animName_t currentAnimation();
 
     ANIMATION_SIGNATURES
 };

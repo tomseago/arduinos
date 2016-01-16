@@ -23,7 +23,7 @@ protected:
     
     virtual void setPixelInFrame(uint16_t which, uint8_t frame, uint8_t r, uint8_t g, uint8_t b, uint8_t flags);
     
-    int16_t actualPixelForIndex(int16_t which, uint8_t flags);
+    virtual int16_t actualPixelForIndex(int16_t which, uint8_t flags);
     
 public:
     Pixels(uint16_t numPixels);
@@ -32,13 +32,14 @@ public:
     virtual uint16_t getNumPixels();
     virtual uint16_t getNumPixelsOnChannel(uint8_t channel);
     virtual uint8_t getNumChannels();
-    
+
     virtual void setBrightness(uint8_t brightness);
     
     int16_t setPixel(int16_t which, uint32_t rgb, uint8_t flags = PF_CURRENT_FRAME);
     int16_t setPixel(int16_t which, uint8_t r, uint8_t g, uint8_t b, uint8_t flags = PF_CURRENT_FRAME);
     
     void setAllPixels(uint8_t r, uint8_t g, uint8_t b, uint8_t flags = PF_CURRENT_FRAME);
+    void setAllPixels(uint32_t color, uint8_t flags = PF_CURRENT_FRAME);
     
     virtual uint32_t getPixel(uint16_t which, uint8_t flags = PF_CURRENT_FRAME);
     

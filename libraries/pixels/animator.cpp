@@ -18,7 +18,7 @@ Animator::Animator(Pixels& pix) :
 
 void
 Animator::begin() {
-    //pixels.setBrightness(128);
+    pixels.setBrightness(128);
     
     startAnimation(ANIM_FLOOD);
 }
@@ -49,6 +49,13 @@ Animator::loop() {
         animParams.elapsedSinceStart = now - animParams.startedAt;
         animParams.elapsedSinceLastDraw = now - animParams.lastDrawAt;
         
+        if (timeScaleFactor > 0) {
+            uint32_t timeOffset = (animParams.elapsedSinceStart * timeScaleFactor) / 1000;
+            animParams.elapsedSinceStart += timeOffset;
+            animParams.elapsedSinceLastDraw += timeOffset;
+        }
+
+
         if (animParams.elapsedSinceStart > MAX_ANIMATION_TIME || 
             (animParams.maxTime > 0 && animParams.elapsedSinceStart > animParams.maxTime )) {
             nextAnimation();
@@ -98,6 +105,12 @@ Animator::loop() {
             // TODO: Add the ability to reverse direction?
             if (animParams.currentFrame >= animParams.totalFrames) {
                 animParams.currentFrame = 0;
+            }
+
+            if (animParams.currentFrame == 1) {
+                if (animParams.flags & (ANIM_FLAG_SKIP_FIRST_FADE) ) {
+                    pixels.copyNextToLast();
+                }
             }
             animParams.lastDrawAt = now;
             animParams.elapsedSinceLastDraw = 0;
@@ -181,6 +194,12 @@ Animator::startAnimation(animName_t animNum) {
         animParams.startedAt -= adjustedFrameLength;
     }
 }
+
+animName_t 
+Animator::currentAnimation() {
+    return currentAnim;
+}
+
 
 void
 Animator::updateSpeed() {

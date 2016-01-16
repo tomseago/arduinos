@@ -2,6 +2,9 @@
 #ifndef _ANIM_FUNCS_H_
 #define _ANIM_FUNCS_H_
 
+// Want JPERF numbers
+#include "jperf_pixels.h"
+
 #define ANIM_START(name, frames, len, f_val) void Animator::name##_setup() { \
     animParams.totalFrames = frames; \
     animParams.frameLength = len; \
@@ -326,5 +329,418 @@ void Animator::JORDAN_RUNWAY_drawFrame() {
         }         
     }    
 }
+
+
+
+uint32_t jperf_colors[] = {
+    0x792C28, // Peach
+    0xC16C06, // Yello
+    0x6906ea, // Dark Purple
+    0x276000, // Green
+    0xBD2273, // Fuschia
+    0x1A6Fff, // Blue
+    // 0xAC73FC, // Light Purple
+};
+#define JP_NUM_COLORS 6
+#define JP_BLOB_HSIZE 20
+
+uint32_t jperf_Mcolors[] = {
+    0xff0000, // Red
+    0xff8000, // Orange
+    0xffff00, // Yellow
+    0x00ff00, // Green
+    0x0000ff, // Blue
+    0xff00ff, // Violet (magenta)
+};
+
+
+/////////
+ANIM_START(JPERF_START, 2, 1000, ANIM_FLAG_WANTS_FADES)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(0)
+    pixels.setPixel(0, 0, 64, 0, PF_NEXT_FRAME);
+    pixels.setPixel(JPERF_BOUNDARY_END-1, 0, 64, 0, PF_NEXT_FRAME);
+
+    // for(int i=0; i<JPERF_COUNT; i++) {
+    //     int ix = (i * JP_NUM_COLORS) / JPERF_COUNT;
+    //     pixels.setPixel(i, jperf_colors[ix], PF_NEXT_FRAME);
+    // }
+
+ANIM_FRAME(1)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_END
+
+
+/////////
+
+
+
+ANIM_START(JPERF_FBLOBS, 2, 1950, (ANIM_FLAG_WANTS_FADES | ANIM_FLAG_SKIP_FIRST_FADE) )
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(0)
+// Pick a spot and a size
+{
+    int center = rand(JP_BLOB_HSIZE, JPERF_BOUNDARY_END - JP_BLOB_HSIZE);
+
+    uint32_t color = jperf_colors[rand(JP_NUM_COLORS)];
+
+    for(int i=0; i<JP_BLOB_HSIZE; i++) {
+        uint32_t brightness = (255 / (i+1));
+
+        uint16_t r = (((color & 0x00ff0000) >> 16) * brightness) >> 8;
+        uint16_t g = (((color & 0x0000ff00) >>  8) * brightness) >> 8;
+        uint16_t b = (((color & 0x000000ff)      ) * brightness) >> 8;
+
+        pixels.setPixel(center + i, r, g, b, PF_NEXT_FRAME);
+        pixels.setPixel(center - i, r, g, b, PF_NEXT_FRAME);
+    }        
+}
+
+ANIM_FRAME(1)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_END
+
+
+/////////
+void Animator::JPERF_FSPARKLE_setup() {
+    animParams.totalFrames = 1600;
+    animParams.frameLength = 15;
+    animParams.flags = ANIM_FLAG_NONE;
+    animParams.maxTime = 300000;
+}
+
+void Animator::JPERF_FSPARKLE_drawFrame() {
+
+    // Setup new colors on next, and we will fade from last to next
+
+    for(int i=0; i< pixels.getNumPixels(); i++) {
+        
+        // Pixels have a small chance of being lit up
+        if (rand(1000) < 200) {
+            pixels.setPixel(i, jperf_colors[rand(JP_NUM_COLORS)]);
+            // pixels.setPixel(i, 255, 255, 255);
+        } else {
+            pixels.setPixel(i, 0, 0, 0);
+        }
+    }
+}
+
+
+/////////
+void Animator::JPERF_FPULSES_setup() {
+    animParams.totalFrames = JPERF_BOUNDARY_END;
+    animParams.frameLength = 4 * 1950 / JPERF_BOUNDARY_END;
+    animParams.flags = ANIM_FLAG_WANTS_FADES;
+
+}
+
+void Animator::JPERF_FPULSES_drawFrame() {
+    if (!animParams.currentFrame) {
+        pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+        animColor = jperf_colors[rand(JP_NUM_COLORS)];
+
+        animReg = rand(3);
+    }
+
+    uint16_t p = animParams.currentFrame;
+
+    switch(animReg) {
+        case 0:
+            // Right to left
+            pixels.setPixel(p, animColor, PF_NEXT_FRAME);
+            break;
+
+        case 1: 
+            // Left to right
+            pixels.setPixel(JPERF_BOUNDARY_END - p, animColor, PF_NEXT_FRAME);
+            break;
+
+        case 2:
+            // Everything fade in
+            {
+            uint32_t brightness = p * (255 / JPERF_BOUNDARY_END);
+
+            uint16_t r = (((animColor & 0x00ff0000) >> 16) * brightness) >> 8;
+            uint16_t g = (((animColor & 0x0000ff00) >>  8) * brightness) >> 8;
+            uint16_t b = (((animColor & 0x000000ff)      ) * brightness) >> 8;
+
+            pixels.setAllPixels(r, g, b, PF_NEXT_FRAME);
+        }
+            break;
+
+        case 3:
+            // Roll around the arm
+
+            // TODO: Implement this
+            break;
+    }
+}
+
+
+/////////
+void Animator::JPERF_FSPOTS_setup() {
+    animParams.totalFrames = 2;
+    animParams.frameLength = 2 * 1950;
+    animParams.flags = ANIM_FLAG_WANTS_FADES;
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+}
+
+void Animator::JPERF_FSPOTS_drawFrame() {
+
+    // Setup new colors on next, and we will fade from last to next
+
+    int center = rand(JP_BLOB_HSIZE, JPERF_BOUNDARY_END - JP_BLOB_HSIZE);
+
+    uint32_t color = jperf_colors[rand(JP_NUM_COLORS)];
+
+    for(int i=0; i<JP_BLOB_HSIZE; i++) {
+        uint32_t brightness = (255 / (i+1));
+
+        uint16_t r = (((color & 0x00ff0000) >> 16) * brightness) >> 8;
+        uint16_t g = (((color & 0x0000ff00) >>  8) * brightness) >> 8;
+        uint16_t b = (((color & 0x000000ff)      ) * brightness) >> 8;
+
+        pixels.setPixel(center + i, r, g, b, PF_NEXT_FRAME);
+        pixels.setPixel(center - i, r, g, b, PF_NEXT_FRAME);
+    }        
+
+}
+
+/////////
+void Animator::JPERF_BREATH_setup() {
+    animParams.totalFrames = 2;
+    animParams.frameLength = 950;
+    animParams.flags = ANIM_FLAG_WANTS_FADES;
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+    animReg = 0;
+}
+
+void Animator::JPERF_BREATH_drawFrame() {
+    if (animParams.currentFrame == 0) {
+        int start = animReg * 12;
+        if (start > JPERF_HCOUNT) {
+            start = JPERF_HCOUNT;
+        }
+        int end = JPERF_COUNT - start;
+
+        animReg++;
+
+        for(int i=start; i<end; i++) {
+            pixels.setPixel(i, 255, 255, 255, PF_NEXT_FRAME);
+        }
+    } else {
+        pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+    }
+}
+
+
+
+///////
+
+/////////
+ANIM_START(JPERF_MBOUNCE, 8, 267, ANIM_FLAG_WANTS_FADES )
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+    animReg = 0;
+
+ANIM_FRAME(0)
+    animColor = jperf_Mcolors[animReg % JP_NUM_COLORS];
+    animReg++;
+
+    pixels.setAllPixels(animColor, PF_NEXT_FRAME);
+
+ANIM_FRAME(1)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(2)
+    pixels.setAllPixels(animColor, PF_NEXT_FRAME);
+
+ANIM_FRAME(3)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(4)
+    pixels.setAllPixels(animColor, PF_NEXT_FRAME);
+
+ANIM_FRAME(5)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(6)
+    pixels.setAllPixels(animColor, PF_NEXT_FRAME);
+
+ANIM_FRAME(7)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_END
+
+
+/////////
+
+ANIM_START(JPERF_MSNARE, 4, 133, ANIM_FLAG_NONE )
+    pixels.setAllPixels(0, 0, 0);
+
+ANIM_FRAME(0)
+// Pick a spot and a size
+{
+    int center = rand(10, JPERF_BOUNDARY_END - 10);
+
+    for(int i=0; i<5; i++) {
+        pixels.setPixel(center + i, 255, 255, 255);
+        pixels.setPixel(center - i, 255, 255, 255);
+    }        
+}
+
+ANIM_FRAME(1)
+    pixels.setAllPixels(0, 0, 0);
+
+ANIM_END
+
+/////////
+
+ANIM_START(JPERF_OFF, 2, 267, ANIM_FLAG_NONE )
+    pixels.setAllPixels(0, 0, 0);
+
+ANIM_END
+
+
+/////////
+void Animator::JPERF_MSPARKLE_setup() {
+    animParams.totalFrames = 1600;
+    animParams.frameLength = 67;
+    animParams.flags = ANIM_FLAG_NONE;
+    animParams.maxTime = 300000;
+}
+
+void Animator::JPERF_MSPARKLE_drawFrame() {
+
+    // Setup new colors on next, and we will fade from last to next
+
+    for(int i=0; i< pixels.getNumPixels(); i++) {
+        
+        // Pixels have a small chance of being lit up
+        if (rand(1000) < 10) {
+            pixels.setPixel(i, jperf_Mcolors[rand(JP_NUM_COLORS)]);
+            // pixels.setPixel(i, 255, 255, 255);
+        } else {
+            pixels.setPixel(i, 0, 0, 0);
+        }
+    }
+}
+
+
+/////////
+ANIM_START(JPERF_MCLAP, 8, 267, ANIM_FLAG_WANTS_FADES )
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+    animReg = 0;
+
+ANIM_FRAME(0)
+    animColor = jperf_Mcolors[animReg % JP_NUM_COLORS];
+    animReg++;
+
+    pixels.setAllPixels(animColor, PF_NEXT_FRAME);
+
+ANIM_FRAME(1)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(2)
+    // pixels.setAllPixels(animColor, PF_NEXT_FRAME);
+
+ANIM_FRAME(3)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(4)
+    pixels.setAllPixels(animColor, PF_NEXT_FRAME);
+
+ANIM_FRAME(5)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(6)
+    // pixels.setAllPixels(animColor, PF_NEXT_FRAME);
+
+ANIM_FRAME(7)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_END
+
+
+
+/////////
+ANIM_START(JPERF_MBOUNCE_END, 8, 267, ANIM_FLAG_WANTS_FADES )
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+    animReg = 0;
+
+ANIM_FRAME(0)
+    animColor = jperf_Mcolors[animReg % JP_NUM_COLORS];
+    capturedColor = jperf_Mcolors[(animReg+1) % JP_NUM_COLORS];
+    animReg++;
+
+    for(int i=0; i<JPERF_COUNT; i++) {
+        if (i < JPERF_BOUNDARY_ELBOW_BICEP || i >= JPERF_BOUNDARY_LBICEP_LELBOW) {
+            pixels.setPixel(i, animColor, PF_NEXT_FRAME);
+        } else {
+            pixels.setPixel(i, capturedColor, PF_NEXT_FRAME);
+        }
+    }
+
+ANIM_FRAME(1)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(2)
+    for(int i=0; i<JPERF_COUNT; i++) {
+        if (i < JPERF_BOUNDARY_ELBOW_BICEP || i >= JPERF_BOUNDARY_LBICEP_LELBOW) {
+            pixels.setPixel(i, animColor, PF_NEXT_FRAME);
+        } else {
+            pixels.setPixel(i, capturedColor, PF_NEXT_FRAME);
+        }
+    }
+
+ANIM_FRAME(3)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(4)
+    for(int i=0; i<JPERF_COUNT; i++) {
+        if (i < JPERF_BOUNDARY_ELBOW_BICEP || i >= JPERF_BOUNDARY_LBICEP_LELBOW) {
+            pixels.setPixel(i, animColor, PF_NEXT_FRAME);
+        } else {
+            pixels.setPixel(i, capturedColor, PF_NEXT_FRAME);
+        }
+    }
+
+ANIM_FRAME(5)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(6)
+    for(int i=0; i<JPERF_COUNT; i++) {
+        if (i < JPERF_BOUNDARY_ELBOW_BICEP || i >= JPERF_BOUNDARY_LBICEP_LELBOW) {
+            pixels.setPixel(i, animColor, PF_NEXT_FRAME);
+        } else {
+            pixels.setPixel(i, capturedColor, PF_NEXT_FRAME);
+        }
+    }
+
+ANIM_FRAME(7)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_END
+
+/////////
+ANIM_START(JPERF_END, 2, 5000, ANIM_FLAG_WANTS_FADES | ANIM_FLAG_SKIP_FIRST_FADE)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+ANIM_FRAME(0)
+    // for(int i=0; i<40; i++) {
+    //     pixels.setPixel(i, 128, 0, 128, PF_NEXT_FRAME);
+    // }
+    pixels.setPixel(0, 0, 0, 64, PF_NEXT_FRAME);
+    pixels.setPixel(JPERF_BOUNDARY_END-1, 0, 0, 64, PF_NEXT_FRAME);
+
+ANIM_FRAME(1)
+    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+
+
+ANIM_END
+
 
 #endif //  _ANIM_FUNCS_H_

@@ -124,6 +124,13 @@ Pixels::setAllPixels(uint8_t r, uint8_t g, uint8_t b, uint8_t flags) {
     }
 }
 
+void
+Pixels::setAllPixels(uint32_t rgb, uint8_t flags) {
+    for(int i=0; i<numPixels; i++) {
+        setPixel(i, rgb, flags);
+    }
+}
+
 uint32_t 
 Pixels::getPixel(uint16_t which, uint8_t flags) {
     if (which > numPixels) {
@@ -176,7 +183,7 @@ Pixels::fadeIntoCurrent(uint8_t distance) {
     int16_t lastOffset = lastFrameIx * numPixels * 3;
     
     int16_t len = numPixels * 3;
-    for(int16_t currentOffset=0; currentOffset < len - 2; nextOffset++, lastOffset++, currentOffset++) {
+    for(int16_t currentOffset=0; currentOffset < len; nextOffset++, lastOffset++, currentOffset++) {
         uint32_t delta = frames[nextOffset] - frames[lastOffset];
         frames[currentOffset] = frames[lastOffset] + (uint8_t)((delta * distance) >> 8);
     }
