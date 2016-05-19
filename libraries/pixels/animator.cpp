@@ -18,7 +18,7 @@ Animator::Animator(Pixels& pix) :
 
 void
 Animator::begin() {
-    pixels.setBrightness(128);
+    pixels.setBrightness(255);
     
     startAnimation(ANIM_FLOOD);
 }
@@ -29,7 +29,8 @@ uint32_t now;
 bool updatedFrames;
 uint32_t nextFrameNum;
 
-#define MAX_ANIMATION_TIME (60 * 60 * 1000)
+// #define MAX_ANIMATION_TIME (60 * 60 * 1000)
+#define MAX_ANIMATION_TIME (10 * 1000)
 
 void 
 Animator::loop() {

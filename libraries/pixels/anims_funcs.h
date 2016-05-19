@@ -234,6 +234,19 @@ ANIM_FEND
 
 
 /////////
+ANIM_FSTART(HALF_WHITE, 2, 1000, ANIM_FLAG_NONE)
+
+    for(int i=0; i<pixels.getNumPixels(); i += 2) {
+        pixels.setPixel(i, 255, 255, 255);
+        if (i+1 < pixels.getNumPixels()) {
+            pixels.setPixel(i+1, 0, 0, 0);
+        }
+    }
+
+ANIM_FEND
+
+/*
+/////////
 void Animator::JORDAN_RUNWAY_setup() {
     animParams.totalFrames = 1600;
     animParams.frameLength = 10;
@@ -741,6 +754,6 @@ ANIM_FRAME(1)
 
 
 ANIM_END
-
+*/
 
 #endif //  _ANIM_FUNCS_H_

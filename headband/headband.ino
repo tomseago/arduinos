@@ -22,6 +22,8 @@ void setup() {
   animator.begin();
   //  pixels.setPixel(0, 0);
   //  pixels.send();
+
+  animator.startAnimation(ANIM_WHITE);
 }
 
 void loop() {
