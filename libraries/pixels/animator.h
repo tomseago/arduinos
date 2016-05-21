@@ -1,10 +1,17 @@
 #ifndef _ANIMATOR_H_
 #define _ANIMATOR_H_
 
+#define ANIMATE_SERVOS true
+
 #include <Arduino.h>
 // #include <application.h>
 
 #include "pixels.h"
+
+#if ANIMATE_SERVOS
+#include "remote_servos.h"
+#endif // ANIMATE_SERVOS
+
 #include "anims.h"
 
 ANIMATION_ENUM
@@ -14,6 +21,9 @@ ANIMATION_ENUM
 #define ANIM_FLAG_MUTES_BASE         (1 << 1)
 #define ANIM_FLAG_ADVANCE_ON_STOP    (1 << 2)
 #define ANIM_FLAG_SKIP_FIRST_FADE    (1 << 3)
+
+// #define MAX_ANIMATION_TIME (60 * 60 * 1000)
+#define DEFAULT_MAX_ANIMATION_TIME (60 * 60 * 1000) // 1 hour
 
 struct animParams_t {
 	uint32_t currentFrame;
@@ -46,18 +56,33 @@ class Animator {
     uint32_t lastFrameAt;
 
     uint32_t adjustedFrameLength;
+
+    uint32_t maxAnimTime;
     
     void updateSpeed();
     
     void nextAnimation();
     
+#if ANIMATE_SERVOS
+    RemoteServos& servos;
+#endif // ANIMATE_SERVOS
+
 public:
     // Because the WS2812 code in particular turns of interrupts,
     // this timeScaleFactor can be set to something other than 1000
     // to scale the timing based on how slow millis is running.
     uint32_t timeScaleFactor;
 
-    Animator(Pixels& pix);
+    Animator(Pixels& pix,
+#if ANIMATE_SERVOS
+        RemoteServos& servos,
+#endif // ANIMATE_SERVOS
+        uint32_t maxAnimTime=DEFAULT_MAX_ANIMATION_TIME
+        );
+
+#if ANIMATE_SERVOS
+    void setServos(RemoteServos& servos);
+#endif // ANIMATE_SERVOS
 
     void begin();
     void loop();

@@ -10,8 +10,19 @@
 #include "animator.h"
 #include "rand.h"
 
-Animator::Animator(Pixels& pix) :
-    pixels(pix)
+
+Animator::Animator(Pixels& pix,
+#if ANIMATE_SERVOS
+        RemoteServos& servos, 
+#endif // ANIMATE_SERVOS
+        uint32_t maxAnimTime
+    ) :
+
+    pixels(pix),
+    maxAnimTime(maxAnimTime)
+#if ANIMATE_SERVOS
+    , servos(servos)
+#endif // ANIMATE_SERVOS
     {
         
 }
@@ -23,14 +34,10 @@ Animator::begin() {
     startAnimation(ANIM_FLOOD);
 }
 
-
-
 uint32_t now;
 bool updatedFrames;
 uint32_t nextFrameNum;
 
-// #define MAX_ANIMATION_TIME (60 * 60 * 1000)
-#define MAX_ANIMATION_TIME (10 * 1000)
 
 void 
 Animator::loop() {
@@ -57,7 +64,7 @@ Animator::loop() {
         }
 
 
-        if (animParams.elapsedSinceStart > MAX_ANIMATION_TIME || 
+        if (animParams.elapsedSinceStart > maxAnimTime || 
             (animParams.maxTime > 0 && animParams.elapsedSinceStart > animParams.maxTime )) {
             nextAnimation();
             loop();
@@ -89,9 +96,10 @@ Animator::loop() {
 
             if (animParams.flags & ANIM_FLAG_WANTS_FADES) {
                 // Move the next to last
-                // memcpy(lastFrame, nextFrame, sizeof(lastFrame));
-                // pixels.swapNextAndLast();
                 pixels.copyNextToLast();
+#if ANIMATE_SERVOS
+                servos.copyNextToLast();
+#endif // #if ANIMATE_SERVOS
             }
 
             switch(currentAnim) {
@@ -111,6 +119,9 @@ Animator::loop() {
             if (animParams.currentFrame == 1) {
                 if (animParams.flags & (ANIM_FLAG_SKIP_FIRST_FADE) ) {
                     pixels.copyNextToLast();
+#if ANIMATE_SERVOS
+                    servos.copyNextToLast();
+#endif // #if ANIMATE_SERVOS
                 }
             }
             animParams.lastDrawAt = now;
@@ -121,10 +132,21 @@ Animator::loop() {
             if (updatedFrames) {
                 // Since next was copied to last, just write out last
                 pixels.copyLastToCurrent();
+
+#if ANIMATE_SERVOS
+                servos.copyLastToCurrent();
+#endif // #if ANIMATE_SERVOS
+
                 lastFrameAt = now;
             } else {
                 // Interpolate between old frame time and now
-                pixels.fadeIntoCurrent( ((now - lastFrameAt) << 8) / adjustedFrameLength );
+                uint8_t distance = ((now - lastFrameAt) << 8) / adjustedFrameLength;
+                pixels.fadeIntoCurrent( distance );
+
+#if ANIMATE_SERVOS
+                servos.fadeIntoCurrent(distance);
+#endif // #if ANIMATE_SERVOS
+
             }
         }
     }
@@ -143,6 +165,11 @@ Animator::loop() {
 
     // Assume work was done
     pixels.send();
+
+#if ANIMATE_SERVOS
+    servos.send();
+#endif // #if ANIMATE_SERVOS
+
 }
 
 

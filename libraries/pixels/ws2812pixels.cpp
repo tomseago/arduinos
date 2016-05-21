@@ -68,7 +68,6 @@ extern "C" void ICACHE_RAM_ATTR espShow(
 
 void
 WS2812Pixels::send() {
-
     uint8_t* pixels = frames;
     uint16_t numBytes = numPixels * 3;
     

@@ -184,8 +184,8 @@ Pixels::fadeIntoCurrent(uint8_t distance) {
     
     int16_t len = numPixels * 3;
     for(int16_t currentOffset=0; currentOffset < len; nextOffset++, lastOffset++, currentOffset++) {
-        uint32_t delta = frames[nextOffset] - frames[lastOffset];
-        frames[currentOffset] = frames[lastOffset] + (uint8_t)((delta * distance) >> 8);
+        int32_t delta = frames[nextOffset] - frames[lastOffset];
+        frames[currentOffset] = frames[lastOffset] + (int8_t)((delta * distance) >> 8);
     }
 }
 
