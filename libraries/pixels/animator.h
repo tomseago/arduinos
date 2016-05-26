@@ -1,7 +1,7 @@
 #ifndef _ANIMATOR_H_
 #define _ANIMATOR_H_
 
-#define ANIMATE_SERVOS true
+#define ANIMATE_SERVOS false
 
 #include <Arduino.h>
 // #include <application.h>

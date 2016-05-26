@@ -31,6 +31,7 @@
 #define ANIM_FEND }
 
 
+#define BLACK 0x000000
 
 
 uint32_t rainbow6_colors[] = {
@@ -57,6 +58,55 @@ uint32_t rybRainbow[] = {
 0xbf0040
 };
 #define RYB_RAINBOW_NUM_COLORS 12
+
+#define OA_ORANGE 0x7f2000
+
+void setLeftAll(Pixels& pixels, uint32_t color, uint8_t flags) {
+    for(int i=18; i<36; i++) {
+        pixels.setPixel(i, color, flags);
+    }
+}
+
+void setRightAll(Pixels& pixels, uint32_t color, uint8_t flags) {
+    for(int i=0; i<18; i++) {
+        pixels.setPixel(i, color, flags);
+    }
+}
+
+
+ANIM_START(OA_FLASH_ALT, 2, 250, ANIM_FLAG_NONE )
+
+ANIM_FRAME(0)
+    animParams.maxTime = 4000;
+
+    setLeftAll(pixels, OA_ORANGE, PF_CURRENT_FRAME);
+    setRightAll(pixels, BLACK, PF_CURRENT_FRAME);
+
+ANIM_FRAME(1)
+    setLeftAll(pixels, BLACK, PF_CURRENT_FRAME);
+    setRightAll(pixels, OA_ORANGE, PF_CURRENT_FRAME);
+
+ANIM_END
+
+
+
+ANIM_START(OA_FLASH_SAME, 2, 250, ANIM_FLAG_NONE )
+
+ANIM_FRAME(0)
+    animParams.maxTime = 4000;
+    
+    setLeftAll(pixels, OA_ORANGE, PF_CURRENT_FRAME);
+    setRightAll(pixels, OA_ORANGE, PF_CURRENT_FRAME);
+
+ANIM_FRAME(1)
+    setLeftAll(pixels, BLACK, PF_CURRENT_FRAME);
+    setRightAll(pixels, BLACK, PF_CURRENT_FRAME);
+
+ANIM_END
+
+
+
+
 
 
 void Animator::FLOOD_setup() {
@@ -263,505 +313,504 @@ ANIM_FEND
 
 /////////
 
-#define SCAN_COLOR 0x0000ff
-#define BLACK 0x000000
+// #define SCAN_COLOR 0x0000ff
 
-#define ROBOT_PIXELS_HEART_START 10
-#define ROBOT_PIXELS_HEART_END 27
+// #define ROBOT_PIXELS_HEART_START 10
+// #define ROBOT_PIXELS_HEART_END 27
 
-#define ROBOT_HEART_BRIGHT 0xff0000
-#define ROBOT_HEART_DIM 0xff0000
+// #define ROBOT_HEART_BRIGHT 0xff0000
+// #define ROBOT_HEART_DIM 0xff0000
 
-#define setHeart(color) { \
-    for(int i=ROBOT_PIXELS_HEART_START; i<ROBOT_PIXELS_HEART_END; i++) { \
-        pixels.setPixel(i, color, PF_NEXT_FRAME); \
-    } \
-}
+// #define setHeart(color) { \
+//     for(int i=ROBOT_PIXELS_HEART_START; i<ROBOT_PIXELS_HEART_END; i++) { \
+//         pixels.setPixel(i, color, PF_NEXT_FRAME); \
+//     } \
+// }
 
-#define setEyes(color) { \
-    for(int i=0; i<10; i++) { \
-        pixels.setPixel(i, color, PF_NEXT_FRAME); \
-    } \
-}
-
-
-ANIM_START(ROBOTX, 10, 200, ANIM_FLAG_WANTS_FADES )
-    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
-    servos.setServo(0, 0, PF_NEXT_FRAME);
-
-ANIM_FRAME(0)
-    pixels.setPixel(9, 0, 0, 0, PF_NEXT_FRAME);
-    pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
-
-    servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
-
-ANIM_FRAME(1)
-    pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
-    pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
-    servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
-
-ANIM_FRAME(2)
-    pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
-    pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
-    servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
-
-ANIM_FRAME(3)
-    pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
-    pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
-    servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
-
-ANIM_FRAME(4)
-    pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
-    pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
-    servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
-
-    setHeart(ROBOT_HEART_BRIGHT)
-
-ANIM_FRAME(5)
-    pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
-    pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
-    servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
-
-    setHeart(ROBOT_HEART_DIM)
-
-ANIM_FRAME(6)
-    pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
-    pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
-    servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
-
-ANIM_FRAME(7)
-    pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
-    pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
-    servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
-
-    setHeart(ROBOT_HEART_BRIGHT)
-
-ANIM_FRAME(8)
-    pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
-    pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
-    servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
-
-ANIM_FRAME(9)
-    pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
-    pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
-    servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
-
-    setHeart(0x000000)
+// #define setEyes(color) { \
+//     for(int i=0; i<10; i++) { \
+//         pixels.setPixel(i, color, PF_NEXT_FRAME); \
+//     } \
+// }
 
 
-ANIM_END
+// ANIM_START(ROBOTX, 10, 200, ANIM_FLAG_WANTS_FADES )
+//     pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+//     servos.setServo(0, 0, PF_NEXT_FRAME);
+
+// ANIM_FRAME(0)
+//     pixels.setPixel(9, 0, 0, 0, PF_NEXT_FRAME);
+//     pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
+
+//     servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
+
+// ANIM_FRAME(1)
+//     pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
+//     pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
+//     servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
+
+// ANIM_FRAME(2)
+//     pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
+//     pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
+//     servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
+
+// ANIM_FRAME(3)
+//     pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
+//     pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
+//     servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
+
+// ANIM_FRAME(4)
+//     pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
+//     pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
+//     servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
+
+//     setHeart(ROBOT_HEART_BRIGHT)
+
+// ANIM_FRAME(5)
+//     pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
+//     pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
+//     servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
+
+//     setHeart(ROBOT_HEART_DIM)
+
+// ANIM_FRAME(6)
+//     pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
+//     pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
+//     servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
+
+// ANIM_FRAME(7)
+//     pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
+//     pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
+//     servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
+
+//     setHeart(ROBOT_HEART_BRIGHT)
+
+// ANIM_FRAME(8)
+//     pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
+//     pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
+//     servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
+
+// ANIM_FRAME(9)
+//     pixels.setPixel(animParams.currentFrame-1, 0, 0, 0, PF_NEXT_FRAME);
+//     pixels.setPixel(animParams.currentFrame, SCAN_COLOR, PF_NEXT_FRAME);
+//     servos.setServo(0, animParams.currentFrame * 10, PF_NEXT_FRAME);
+
+//     setHeart(0x000000)
 
 
-/////////
+// ANIM_END
 
-// void Animator::ROBOT_ONE_setup() {
-//     animParams.totalFrames = 1600;
-//     animParams.frameLength = 10;
-//     animParams.flags = ANIM_FLAG_NONE; // No fades
-//     animParams.maxTime = 0; // Run forever
+
+// /////////
+
+// // void Animator::ROBOT_ONE_setup() {
+// //     animParams.totalFrames = 1600;
+// //     animParams.frameLength = 10;
+// //     animParams.flags = ANIM_FLAG_NONE; // No fades
+// //     animParams.maxTime = 0; // Run forever
+// //     animReg = 0;
+// // }
+
+// // void Animator::ROBOT_ONE_drawFrame() {
+
+// // }
+
+// /////////
+
+// #define HS_PUPIL 0x0080ff
+// #define HS_PUPIL 0xff0000
+
+// uint8_t heartDot(uint8_t ix) {
+//     switch (ix) {
+//         case 0:
+//             return 26;
+
+//         case 1:
+//             return 12;
+
+//         case 2:
+//             return 13;
+
+//         case 3:
+//             return 16;
+
+//         case 4:
+//             return 24;
+
+//         case 5:
+//             return 18;
+//     }
+
+//     return 99;
+// }
+
+// void randomRainbowHeartDots(Pixels& pixels, uint8_t flags) {
+
+
+//     setHeart(0);
+//     if (rand(2)) {
+//         pixels.setPixel(11, rainbow6_colors[rand(6)], flags);
+//         pixels.setPixel(12, rainbow6_colors[rand(6)], flags);
+
+//         pixels.setPixel(20, rainbow6_colors[rand(6)], flags);
+//     } else {
+//         pixels.setPixel(26, rainbow6_colors[rand(6)], flags);
+//         pixels.setPixel(14, rainbow6_colors[rand(6)], flags);
+
+//     }
+
+//     // if (rand(2)) {
+//     //     pixels.setPixel(11, rybRainbow[rand(RYB_RAINBOW_NUM_COLORS)], flags);
+//     //     pixels.setPixel(12, rybRainbow[rand(RYB_RAINBOW_NUM_COLORS)], flags);
+
+//     //     pixels.setPixel(20, rybRainbow[rand(RYB_RAINBOW_NUM_COLORS)], flags);
+//     // } else {
+//     //     pixels.setPixel(26, rybRainbow[rand(RYB_RAINBOW_NUM_COLORS)], flags);
+//     //     pixels.setPixel(14, rybRainbow[rand(RYB_RAINBOW_NUM_COLORS)], flags);
+
+//     // }
+
+
+//     // for(int i=1; i<3; i++) {
+//     //     uint8_t colorIx = rand(RYB_RAINBOW_NUM_COLORS);
+
+//     //     pixels.setPixel(heartDot(i), rybRainbow[colorIx], flags);
+//     // }
+// }
+
+// #define HS_EYE_WHITE 0x202020
+// #define HS_EYE_PUPIL 0x800000
+
+
+// #define SW_BASE 0x802020
+// #define SW_SWELL_1 0xC00000
+// #define SW_SWELL_2 0x800000
+
+// void leftEyeOpen(Pixels& pixels, uint8_t flags) {
+//     pixels.setPixel(5, HS_EYE_WHITE, flags);
+//     pixels.setPixel(6, HS_EYE_WHITE, flags);
+//     pixels.setPixel(7, HS_EYE_PUPIL, flags);
+//     pixels.setPixel(8, HS_EYE_WHITE, flags);
+//     pixels.setPixel(9, HS_EYE_WHITE, flags);
+// }
+
+// void rightEyeOpen(Pixels& pixels, uint8_t flags) {
+//     pixels.setPixel(0, HS_EYE_WHITE, flags);
+//     pixels.setPixel(1, HS_EYE_WHITE, flags);
+//     pixels.setPixel(2, HS_EYE_PUPIL, flags);
+//     pixels.setPixel(3, HS_EYE_WHITE, flags);
+//     pixels.setPixel(4, HS_EYE_WHITE, flags);
+// }
+
+// ANIM_START(ROBOT_HEAD_SHRUGS, 9, 500, ANIM_FLAG_WANTS_FADES )
+//     // pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+//     servos.setServo(0, 90, PF_NEXT_FRAME);
+//     // setHeart(BLACK);
+//     animParams.maxTime = 19010; // 4 cycles
+
+//     // Used for heart fill
+//     animColor = SW_BASE;
+
+// ANIM_FRAME(0)
+//     servos.setServo(0, 90, PF_NEXT_FRAME);
+//     setEyes(HS_EYE_WHITE);
+//     pixels.setPixel(2, HS_EYE_PUPIL, PF_NEXT_FRAME);
+//     pixels.setPixel(7, HS_EYE_PUPIL, PF_NEXT_FRAME);
+//     // randomRainbowHeartDots(pixels, PF_NEXT_FRAME);
+//     setHeart(BLACK);
+
+// ANIM_FRAME(1)
+//     servos.setServo(0, 110, PF_NEXT_FRAME);
+//     setEyes(HS_EYE_WHITE);
+//     pixels.setPixel(1, HS_EYE_PUPIL, PF_NEXT_FRAME);
+//     pixels.setPixel(6, HS_EYE_PUPIL, PF_NEXT_FRAME);
+
+//     pixels.setPixel(11, animColor, PF_NEXT_FRAME);
+//     pixels.setPixel(12, animColor, PF_NEXT_FRAME);
+
+// // Pause 2 frames
+// ANIM_FRAME(2)
+//     pixels.setPixel(10, animColor, PF_NEXT_FRAME);
+//     pixels.setPixel(13, animColor, PF_NEXT_FRAME);
+
+// ANIM_FRAME(3)
+//     pixels.setPixel(26, animColor, PF_NEXT_FRAME);
+//     pixels.setPixel(14, animColor, PF_NEXT_FRAME);
+
+// ANIM_FRAME(4)
+//     servos.setServo(0, 90, PF_NEXT_FRAME);
+//     setEyes(HS_EYE_WHITE);
+//     pixels.setPixel(2, HS_EYE_PUPIL, PF_NEXT_FRAME);
+//     pixels.setPixel(7, HS_EYE_PUPIL, PF_NEXT_FRAME);
+
+//     pixels.setPixel(25, animColor, PF_NEXT_FRAME);
+//     pixels.setPixel(15, animColor, PF_NEXT_FRAME);
+
+// ANIM_FRAME(5)
+//     servos.setServo(0, 70, PF_NEXT_FRAME);
+//     setEyes(HS_EYE_WHITE);
+//     pixels.setPixel(3, HS_EYE_PUPIL, PF_NEXT_FRAME);
+//     pixels.setPixel(8, HS_EYE_PUPIL, PF_NEXT_FRAME);
+
+//     pixels.setPixel(24, animColor, PF_NEXT_FRAME);
+//     pixels.setPixel(16, animColor, PF_NEXT_FRAME);
+
+
+// // Pause 2 frames
+// ANIM_FRAME(6)
+//     pixels.setPixel(23, animColor, PF_NEXT_FRAME);
+//     pixels.setPixel(17, animColor, PF_NEXT_FRAME);
+
+// ANIM_FRAME(7)
+//     pixels.setPixel(22, animColor, PF_NEXT_FRAME);
+//     pixels.setPixel(18, animColor, PF_NEXT_FRAME);
+
+// // Back towards center
+// ANIM_FRAME(8)
+//     servos.setServo(0, 90, PF_NEXT_FRAME);
+//     setEyes(HS_EYE_WHITE);
+//     pixels.setPixel(3, HS_EYE_PUPIL, PF_NEXT_FRAME);
+//     pixels.setPixel(8, HS_EYE_PUPIL, PF_NEXT_FRAME);
+
+//     pixels.setPixel(21, animColor, PF_NEXT_FRAME);
+//     pixels.setPixel(19, animColor, PF_NEXT_FRAME);
+//     pixels.setPixel(20, animColor, PF_NEXT_FRAME);
+
+
+// ANIM_END
+
+
+
+
+// ////////
+
+
+// ANIM_START(ROBOT_HEART_BEAT, 7, 143, ANIM_FLAG_WANTS_FADES )
+//     // pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+//     // servos.setServo(0, 90, PF_NEXT_FRAME);
+//     // setHeart(BLACK);
+//     animParams.maxTime = 10000; 
+
+// ANIM_FRAME(0)
+//     servos.setServo(0, 90, PF_NEXT_FRAME);
+//     setEyes(HS_EYE_WHITE);
+//     pixels.setPixel(2, HS_EYE_PUPIL, PF_NEXT_FRAME);
+//     pixels.setPixel(7, HS_EYE_PUPIL, PF_NEXT_FRAME);
+
+//     // randomRainbowHeartDots(pixels, PF_NEXT_FRAME);
+//     setHeart(SW_BASE);
+
+// ANIM_FRAME(1)
+
+// ANIM_FRAME(2)
+
+// ANIM_FRAME(3)
+
+// ANIM_FRAME(4)
+//     setHeart(SW_SWELL_1);
+
+//     if (rand(5) == 0) {
+//         pixels.setPixel(0, BLACK, PF_NEXT_FRAME);
+//         pixels.setPixel(1, BLACK, PF_NEXT_FRAME);
+//         pixels.setPixel(2, BLACK, PF_NEXT_FRAME);
+//         pixels.setPixel(3, BLACK, PF_NEXT_FRAME);
+//         pixels.setPixel(4, BLACK, PF_NEXT_FRAME);
+//     }
+
+
+// ANIM_FRAME(5)
+//     setHeart(SW_BASE);
+
+//     setEyes(HS_EYE_WHITE);
+//     pixels.setPixel(2, HS_EYE_PUPIL, PF_NEXT_FRAME);
+//     pixels.setPixel(7, HS_EYE_PUPIL, PF_NEXT_FRAME);
+
+// ANIM_FRAME(6)
+//     setHeart(SW_SWELL_2);
+
+// ANIM_END
+
+
+
+
+// ANIM_START(ROBOT_SLEEP, 10, 1000, ANIM_FLAG_WANTS_FADES )
+//     // pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+//     // servos.setServo(0, 90, PF_NEXT_FRAME);
+//     // setHeart(BLACK);
+//     animParams.maxTime = 9500; // 2 cycles
+
+// ANIM_FRAME(0)
+//     servos.setServo(0, 90, PF_NEXT_FRAME);
+//     setEyes(HS_EYE_WHITE);
+//     pixels.setPixel(2, HS_EYE_PUPIL, PF_NEXT_FRAME);
+//     pixels.setPixel(7, HS_EYE_PUPIL, PF_NEXT_FRAME);
+
+//     // randomRainbowHeartDots(pixels, PF_NEXT_FRAME);
+//     setHeart(SW_BASE);
+
+// ANIM_FRAME(1)
+//     setEyes(0x050510);
+//     setHeart(0x202040);
+
+// ANIM_FRAME(2)
+//     servos.setServo(0, 60, PF_NEXT_FRAME);
+//     setEyes(BLACK);
+//     setHeart(BLACK);
+
+// ANIM_FRAME(3)
+
+// ANIM_FRAME(4)
+
+// ANIM_FRAME(5)
+
+// ANIM_FRAME(6)
+
+// ANIM_FRAME(7)
+
+// ANIM_FRAME(8)
+
+// ANIM_FRAME(9)
+//     servos.setServo(0, 100, PF_NEXT_FRAME);
+
+// ANIM_END
+
+
+
+
+// ANIM_START(ROBOT_ONE_EYE_WAKE, 5, 800, ANIM_FLAG_WANTS_FADES )
+//     // pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+//     // servos.setServo(0, 90, PF_NEXT_FRAME);
+//     // setHeart(BLACK);
+//     animParams.maxTime = 0; // 2 cycles
+
+// ANIM_FRAME(0)
+//     if (!rand(2)) {
+//         rightEyeOpen(pixels, PF_NEXT_FRAME);
+//     }
+
+// ANIM_FRAME(1)
+//     setEyes(BLACK);
+//     setHeart(BLACK);
+
+// ANIM_FRAME(2)
+
+// ANIM_FRAME(3)
+
+// ANIM_FRAME(4)
+//     // Decide if we are done or not?
+//     if (!rand(6)) {
+//         animParams.maxTime = 10;
+//     }
+
+// ANIM_END
+
+
+
+// void setHeartRow(Pixels& pixels, uint8_t row, uint32_t color, uint8_t flags) {
+//     switch(row) {
+//         case 6:
+//             pixels.setPixel(20, color, flags);
+//             break;
+
+//         case 5:
+//             pixels.setPixel(21, color, flags);
+//             pixels.setPixel(19, color, flags);
+//             break;
+
+//         case 4:
+//             pixels.setPixel(22, color, flags);
+//             pixels.setPixel(18, color, flags);
+//             break;
+//         case 3:
+//             pixels.setPixel(23, color, flags);
+//             pixels.setPixel(17, color, flags);
+//             break;
+
+//         case 2:
+//             pixels.setPixel(24, color, flags);
+//             pixels.setPixel(11, color, flags);
+//             pixels.setPixel(12, color, flags);
+//             pixels.setPixel(16, color, flags);
+//             break;
+//         case 1:
+//             pixels.setPixel(25, color, flags);
+//             pixels.setPixel(10, color, flags);
+//             pixels.setPixel(13, color, flags);
+//             pixels.setPixel(15, color, flags);
+//             break;
+
+//         case 0:
+//             pixels.setPixel(26, color, flags);
+//             pixels.setPixel(14, color, flags);
+//             break;
+//     }
+// }
+
+
+// void Animator::ROBOT_RAINBOW_WAKE_FILL_setup() {
+//     animParams.totalFrames = 7;
+//     animParams.frameLength = 500;
+//     animParams.flags = ANIM_FLAG_WANTS_FADES; // No fades
+//     animParams.maxTime = 3750; // Run forever
 //     animReg = 0;
+
+//     servos.setServo(0, 60, PF_NEXT_FRAME);
+//     setHeart(BLACK);
 // }
 
-// void Animator::ROBOT_ONE_drawFrame() {
+// void Animator::ROBOT_RAINBOW_WAKE_FILL_drawFrame() {
+//     if (animParams.currentFrame < 0 || animParams.currentFrame >= animParams.totalFrames) return;
 
+//     for(int8_t i=0; i<=animParams.currentFrame; i++) {
+//         setHeartRow(pixels, 6-i, rybRainbow[animParams.currentFrame - i], PF_NEXT_FRAME);
+//     }
 // }
 
-/////////
-
-#define HS_PUPIL 0x0080ff
-#define HS_PUPIL 0xff0000
-
-uint8_t heartDot(uint8_t ix) {
-    switch (ix) {
-        case 0:
-            return 26;
-
-        case 1:
-            return 12;
-
-        case 2:
-            return 13;
-
-        case 3:
-            return 16;
-
-        case 4:
-            return 24;
-
-        case 5:
-            return 18;
-    }
-
-    return 99;
-}
-
-void randomRainbowHeartDots(Pixels& pixels, uint8_t flags) {
-
-
-    setHeart(0);
-    if (rand(2)) {
-        pixels.setPixel(11, rainbow6_colors[rand(6)], flags);
-        pixels.setPixel(12, rainbow6_colors[rand(6)], flags);
-
-        pixels.setPixel(20, rainbow6_colors[rand(6)], flags);
-    } else {
-        pixels.setPixel(26, rainbow6_colors[rand(6)], flags);
-        pixels.setPixel(14, rainbow6_colors[rand(6)], flags);
-
-    }
-
-    // if (rand(2)) {
-    //     pixels.setPixel(11, rybRainbow[rand(RYB_RAINBOW_NUM_COLORS)], flags);
-    //     pixels.setPixel(12, rybRainbow[rand(RYB_RAINBOW_NUM_COLORS)], flags);
-
-    //     pixels.setPixel(20, rybRainbow[rand(RYB_RAINBOW_NUM_COLORS)], flags);
-    // } else {
-    //     pixels.setPixel(26, rybRainbow[rand(RYB_RAINBOW_NUM_COLORS)], flags);
-    //     pixels.setPixel(14, rybRainbow[rand(RYB_RAINBOW_NUM_COLORS)], flags);
-
-    // }
-
-
-    // for(int i=1; i<3; i++) {
-    //     uint8_t colorIx = rand(RYB_RAINBOW_NUM_COLORS);
-
-    //     pixels.setPixel(heartDot(i), rybRainbow[colorIx], flags);
-    // }
-}
-
-#define HS_EYE_WHITE 0x202020
-#define HS_EYE_PUPIL 0x800000
-
-
-#define SW_BASE 0x802020
-#define SW_SWELL_1 0xC00000
-#define SW_SWELL_2 0x800000
-
-void leftEyeOpen(Pixels& pixels, uint8_t flags) {
-    pixels.setPixel(5, HS_EYE_WHITE, flags);
-    pixels.setPixel(6, HS_EYE_WHITE, flags);
-    pixels.setPixel(7, HS_EYE_PUPIL, flags);
-    pixels.setPixel(8, HS_EYE_WHITE, flags);
-    pixels.setPixel(9, HS_EYE_WHITE, flags);
-}
-
-void rightEyeOpen(Pixels& pixels, uint8_t flags) {
-    pixels.setPixel(0, HS_EYE_WHITE, flags);
-    pixels.setPixel(1, HS_EYE_WHITE, flags);
-    pixels.setPixel(2, HS_EYE_PUPIL, flags);
-    pixels.setPixel(3, HS_EYE_WHITE, flags);
-    pixels.setPixel(4, HS_EYE_WHITE, flags);
-}
-
-ANIM_START(ROBOT_HEAD_SHRUGS, 9, 500, ANIM_FLAG_WANTS_FADES )
-    // pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
-    servos.setServo(0, 90, PF_NEXT_FRAME);
-    // setHeart(BLACK);
-    animParams.maxTime = 19010; // 4 cycles
-
-    // Used for heart fill
-    animColor = SW_BASE;
-
-ANIM_FRAME(0)
-    servos.setServo(0, 90, PF_NEXT_FRAME);
-    setEyes(HS_EYE_WHITE);
-    pixels.setPixel(2, HS_EYE_PUPIL, PF_NEXT_FRAME);
-    pixels.setPixel(7, HS_EYE_PUPIL, PF_NEXT_FRAME);
-    // randomRainbowHeartDots(pixels, PF_NEXT_FRAME);
-    setHeart(BLACK);
-
-ANIM_FRAME(1)
-    servos.setServo(0, 110, PF_NEXT_FRAME);
-    setEyes(HS_EYE_WHITE);
-    pixels.setPixel(1, HS_EYE_PUPIL, PF_NEXT_FRAME);
-    pixels.setPixel(6, HS_EYE_PUPIL, PF_NEXT_FRAME);
-
-    pixels.setPixel(11, animColor, PF_NEXT_FRAME);
-    pixels.setPixel(12, animColor, PF_NEXT_FRAME);
-
-// Pause 2 frames
-ANIM_FRAME(2)
-    pixels.setPixel(10, animColor, PF_NEXT_FRAME);
-    pixels.setPixel(13, animColor, PF_NEXT_FRAME);
-
-ANIM_FRAME(3)
-    pixels.setPixel(26, animColor, PF_NEXT_FRAME);
-    pixels.setPixel(14, animColor, PF_NEXT_FRAME);
-
-ANIM_FRAME(4)
-    servos.setServo(0, 90, PF_NEXT_FRAME);
-    setEyes(HS_EYE_WHITE);
-    pixels.setPixel(2, HS_EYE_PUPIL, PF_NEXT_FRAME);
-    pixels.setPixel(7, HS_EYE_PUPIL, PF_NEXT_FRAME);
-
-    pixels.setPixel(25, animColor, PF_NEXT_FRAME);
-    pixels.setPixel(15, animColor, PF_NEXT_FRAME);
-
-ANIM_FRAME(5)
-    servos.setServo(0, 70, PF_NEXT_FRAME);
-    setEyes(HS_EYE_WHITE);
-    pixels.setPixel(3, HS_EYE_PUPIL, PF_NEXT_FRAME);
-    pixels.setPixel(8, HS_EYE_PUPIL, PF_NEXT_FRAME);
-
-    pixels.setPixel(24, animColor, PF_NEXT_FRAME);
-    pixels.setPixel(16, animColor, PF_NEXT_FRAME);
-
-
-// Pause 2 frames
-ANIM_FRAME(6)
-    pixels.setPixel(23, animColor, PF_NEXT_FRAME);
-    pixels.setPixel(17, animColor, PF_NEXT_FRAME);
-
-ANIM_FRAME(7)
-    pixels.setPixel(22, animColor, PF_NEXT_FRAME);
-    pixels.setPixel(18, animColor, PF_NEXT_FRAME);
-
-// Back towards center
-ANIM_FRAME(8)
-    servos.setServo(0, 90, PF_NEXT_FRAME);
-    setEyes(HS_EYE_WHITE);
-    pixels.setPixel(3, HS_EYE_PUPIL, PF_NEXT_FRAME);
-    pixels.setPixel(8, HS_EYE_PUPIL, PF_NEXT_FRAME);
-
-    pixels.setPixel(21, animColor, PF_NEXT_FRAME);
-    pixels.setPixel(19, animColor, PF_NEXT_FRAME);
-    pixels.setPixel(20, animColor, PF_NEXT_FRAME);
-
-
-ANIM_END
-
-
-
-
-////////
-
-
-ANIM_START(ROBOT_HEART_BEAT, 7, 143, ANIM_FLAG_WANTS_FADES )
-    // pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
-    // servos.setServo(0, 90, PF_NEXT_FRAME);
-    // setHeart(BLACK);
-    animParams.maxTime = 10000; 
-
-ANIM_FRAME(0)
-    servos.setServo(0, 90, PF_NEXT_FRAME);
-    setEyes(HS_EYE_WHITE);
-    pixels.setPixel(2, HS_EYE_PUPIL, PF_NEXT_FRAME);
-    pixels.setPixel(7, HS_EYE_PUPIL, PF_NEXT_FRAME);
-
-    // randomRainbowHeartDots(pixels, PF_NEXT_FRAME);
-    setHeart(SW_BASE);
-
-ANIM_FRAME(1)
-
-ANIM_FRAME(2)
-
-ANIM_FRAME(3)
-
-ANIM_FRAME(4)
-    setHeart(SW_SWELL_1);
-
-    if (rand(5) == 0) {
-        pixels.setPixel(0, BLACK, PF_NEXT_FRAME);
-        pixels.setPixel(1, BLACK, PF_NEXT_FRAME);
-        pixels.setPixel(2, BLACK, PF_NEXT_FRAME);
-        pixels.setPixel(3, BLACK, PF_NEXT_FRAME);
-        pixels.setPixel(4, BLACK, PF_NEXT_FRAME);
-    }
-
-
-ANIM_FRAME(5)
-    setHeart(SW_BASE);
-
-    setEyes(HS_EYE_WHITE);
-    pixels.setPixel(2, HS_EYE_PUPIL, PF_NEXT_FRAME);
-    pixels.setPixel(7, HS_EYE_PUPIL, PF_NEXT_FRAME);
-
-ANIM_FRAME(6)
-    setHeart(SW_SWELL_2);
-
-ANIM_END
-
-
-
-
-ANIM_START(ROBOT_SLEEP, 10, 1000, ANIM_FLAG_WANTS_FADES )
-    // pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
-    // servos.setServo(0, 90, PF_NEXT_FRAME);
-    // setHeart(BLACK);
-    animParams.maxTime = 9500; // 2 cycles
-
-ANIM_FRAME(0)
-    servos.setServo(0, 90, PF_NEXT_FRAME);
-    setEyes(HS_EYE_WHITE);
-    pixels.setPixel(2, HS_EYE_PUPIL, PF_NEXT_FRAME);
-    pixels.setPixel(7, HS_EYE_PUPIL, PF_NEXT_FRAME);
-
-    // randomRainbowHeartDots(pixels, PF_NEXT_FRAME);
-    setHeart(SW_BASE);
-
-ANIM_FRAME(1)
-    setEyes(0x050510);
-    setHeart(0x202040);
-
-ANIM_FRAME(2)
-    servos.setServo(0, 60, PF_NEXT_FRAME);
-    setEyes(BLACK);
-    setHeart(BLACK);
-
-ANIM_FRAME(3)
-
-ANIM_FRAME(4)
-
-ANIM_FRAME(5)
-
-ANIM_FRAME(6)
-
-ANIM_FRAME(7)
-
-ANIM_FRAME(8)
-
-ANIM_FRAME(9)
-    servos.setServo(0, 100, PF_NEXT_FRAME);
-
-ANIM_END
-
-
-
-
-ANIM_START(ROBOT_ONE_EYE_WAKE, 5, 800, ANIM_FLAG_WANTS_FADES )
-    // pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
-    // servos.setServo(0, 90, PF_NEXT_FRAME);
-    // setHeart(BLACK);
-    animParams.maxTime = 0; // 2 cycles
-
-ANIM_FRAME(0)
-    if (!rand(2)) {
-        rightEyeOpen(pixels, PF_NEXT_FRAME);
-    }
-
-ANIM_FRAME(1)
-    setEyes(BLACK);
-    setHeart(BLACK);
-
-ANIM_FRAME(2)
-
-ANIM_FRAME(3)
-
-ANIM_FRAME(4)
-    // Decide if we are done or not?
-    if (!rand(6)) {
-        animParams.maxTime = 10;
-    }
-
-ANIM_END
-
-
-
-void setHeartRow(Pixels& pixels, uint8_t row, uint32_t color, uint8_t flags) {
-    switch(row) {
-        case 6:
-            pixels.setPixel(20, color, flags);
-            break;
-
-        case 5:
-            pixels.setPixel(21, color, flags);
-            pixels.setPixel(19, color, flags);
-            break;
-
-        case 4:
-            pixels.setPixel(22, color, flags);
-            pixels.setPixel(18, color, flags);
-            break;
-        case 3:
-            pixels.setPixel(23, color, flags);
-            pixels.setPixel(17, color, flags);
-            break;
-
-        case 2:
-            pixels.setPixel(24, color, flags);
-            pixels.setPixel(11, color, flags);
-            pixels.setPixel(12, color, flags);
-            pixels.setPixel(16, color, flags);
-            break;
-        case 1:
-            pixels.setPixel(25, color, flags);
-            pixels.setPixel(10, color, flags);
-            pixels.setPixel(13, color, flags);
-            pixels.setPixel(15, color, flags);
-            break;
-
-        case 0:
-            pixels.setPixel(26, color, flags);
-            pixels.setPixel(14, color, flags);
-            break;
-    }
-}
-
-
-void Animator::ROBOT_RAINBOW_WAKE_FILL_setup() {
-    animParams.totalFrames = 7;
-    animParams.frameLength = 500;
-    animParams.flags = ANIM_FLAG_WANTS_FADES; // No fades
-    animParams.maxTime = 3750; // Run forever
-    animReg = 0;
-
-    servos.setServo(0, 60, PF_NEXT_FRAME);
-    setHeart(BLACK);
-}
-
-void Animator::ROBOT_RAINBOW_WAKE_FILL_drawFrame() {
-    if (animParams.currentFrame < 0 || animParams.currentFrame >= animParams.totalFrames) return;
-
-    for(int8_t i=0; i<=animParams.currentFrame; i++) {
-        setHeartRow(pixels, 6-i, rybRainbow[animParams.currentFrame - i], PF_NEXT_FRAME);
-    }
-}
-
-void Animator::ROBOT_RAINBOW_WAKE_ROT_setup() {
-    animParams.totalFrames = 1600;
-    animParams.frameLength = 200;
-    animParams.flags = ANIM_FLAG_WANTS_FADES; // No fades
-    animParams.maxTime = 10000; 
-
-    // servos.setServo(0, 100, PF_NEXT_FRAME);
-    // setHeart(BLACK);
-    setEyes(BLACK);
-}
-
-void Animator::ROBOT_RAINBOW_WAKE_ROT_drawFrame() {
-
-    if (animParams.currentFrame < 0 || animParams.currentFrame >= animParams.totalFrames) return;
-
-    for(int8_t i=0; i<7; i++) {
-        int8_t ix = ((animParams.currentFrame) % RYB_RAINBOW_NUM_COLORS) - i - 6;
-        if (ix < 0) {
-            ix += RYB_RAINBOW_NUM_COLORS;
-        }
-
-        setHeartRow(pixels, 6-i, rybRainbow[ix], PF_NEXT_FRAME);        
-    }
-
-    for(int8_t px=0; px<10; px++) {
-        int8_t cix = animParams.currentFrame + px;
-        while(cix >= RYB_RAINBOW_NUM_COLORS) {
-            cix -= RYB_RAINBOW_NUM_COLORS;
-        }
-
-        pixels.setPixel(px, rybRainbow[cix], PF_NEXT_FRAME);
-    }
-
-    if (animParams.currentFrame < 6) {
-        uint8_t pos = 100 - ((6-animParams.currentFrame) * 5);
-        servos.setServo(0, pos, PF_NEXT_FRAME);
-    }
-
-    // for(int8_t i=0; i<=animParams.currentFrame; i++) {
-    //     setHeartRow(pixels, 6-i, rybRainbow[animParams.currentFrame - i], PF_NEXT_FRAME);
-    // }
-    // setHeartRow(pixels, 6-animParams.currentFrame, rybRainbow[animParams.currentFrame], PF_NEXT_FRAME);
-    // setEyes(BLACK);
-    // pixels.setPixel(animParams.currentFrame, 0xff0000, PF_NEXT_FRAME);
-}
+// void Animator::ROBOT_RAINBOW_WAKE_ROT_setup() {
+//     animParams.totalFrames = 1600;
+//     animParams.frameLength = 200;
+//     animParams.flags = ANIM_FLAG_WANTS_FADES; // No fades
+//     animParams.maxTime = 10000; 
+
+//     // servos.setServo(0, 100, PF_NEXT_FRAME);
+//     // setHeart(BLACK);
+//     setEyes(BLACK);
+// }
+
+// void Animator::ROBOT_RAINBOW_WAKE_ROT_drawFrame() {
+
+//     if (animParams.currentFrame < 0 || animParams.currentFrame >= animParams.totalFrames) return;
+
+//     for(int8_t i=0; i<7; i++) {
+//         int8_t ix = ((animParams.currentFrame) % RYB_RAINBOW_NUM_COLORS) - i - 6;
+//         if (ix < 0) {
+//             ix += RYB_RAINBOW_NUM_COLORS;
+//         }
+
+//         setHeartRow(pixels, 6-i, rybRainbow[ix], PF_NEXT_FRAME);        
+//     }
+
+//     for(int8_t px=0; px<10; px++) {
+//         int8_t cix = animParams.currentFrame + px;
+//         while(cix >= RYB_RAINBOW_NUM_COLORS) {
+//             cix -= RYB_RAINBOW_NUM_COLORS;
+//         }
+
+//         pixels.setPixel(px, rybRainbow[cix], PF_NEXT_FRAME);
+//     }
+
+//     if (animParams.currentFrame < 6) {
+//         uint8_t pos = 100 - ((6-animParams.currentFrame) * 5);
+//         servos.setServo(0, pos, PF_NEXT_FRAME);
+//     }
+
+//     // for(int8_t i=0; i<=animParams.currentFrame; i++) {
+//     //     setHeartRow(pixels, 6-i, rybRainbow[animParams.currentFrame - i], PF_NEXT_FRAME);
+//     // }
+//     // setHeartRow(pixels, 6-animParams.currentFrame, rybRainbow[animParams.currentFrame], PF_NEXT_FRAME);
+//     // setEyes(BLACK);
+//     // pixels.setPixel(animParams.currentFrame, 0xff0000, PF_NEXT_FRAME);
+// }
 
 /*
 /////////
