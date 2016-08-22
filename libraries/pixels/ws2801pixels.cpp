@@ -15,7 +15,7 @@ WS2801Pixels::WS2801Pixels(uint16_t numPixels) :
 #endif
 }
 
-void
+uint32_t
 WS2801Pixels::send() {
     int16_t len = numPixels * 3;
 
@@ -26,4 +26,7 @@ WS2801Pixels::send() {
     // This "latches" the data into the pixels. I think the _actual_ delay necessary
     // is only 500ms though from the data sheet.
     delay(1); 
+
+    // No offset
+    return 0;
 }

@@ -31,6 +31,7 @@ WS2812Pixels::WS2812Pixels(uint16_t numPixels, int outputPin, uint8_t type) :
     // Begin
     pinMode(outputPin, OUTPUT);
     digitalWrite(outputPin, LOW);
+
 }
 
 void
@@ -66,12 +67,12 @@ extern "C" void ICACHE_RAM_ATTR espShow(
 #endif // ESP8266
 
 
-void
+uint32_t
 WS2812Pixels::send() {
     uint8_t* pixels = frames;
     uint16_t numBytes = numPixels * 3;
     
-  if(!pixels) return;
+  if(!pixels) return 0;
 
   // Data latch = 50+ microsecond pause in the output stream.  Rather than
   // put a delay at the end of the function, the ending time is noted and
@@ -93,6 +94,8 @@ WS2812Pixels::send() {
   // accessing the PORT.  The code takes an initial 'snapshot' of the PORT
   // state, computes 'pin high' and 'pin low' values, and writes these back
   // to the PORT register as needed.
+
+  uint32_t timeSpentWithoutInterrupts = 0;
 
   noInterrupts(); // Need 100% focus on instruction timing
 
@@ -567,6 +570,10 @@ WS2812Pixels::send() {
   if((type & NEO_SPDMASK) == NEO_KHZ800) { // 800 KHz bitstream
 #endif
 
+    // 30.2 us per pixel, so calculated this shifted left byte 8
+    // and then shift it down after we are done
+    timeSpentWithoutInterrupts = (7731 * (uint32_t)numPixels) >> 8;
+
     // WS2811 and WS2812 have different hi/lo duty cycles; this is
     // similar but NOT an exact copy of the prior 400-on-8 code.
 
@@ -986,4 +993,6 @@ WS2812Pixels::send() {
 
   interrupts();
   endTime = micros(); // Save EOD time for latch on next call
+
+  return timeSpentWithoutInterrupts;
 }

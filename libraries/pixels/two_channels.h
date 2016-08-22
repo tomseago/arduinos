@@ -29,7 +29,7 @@ public:
     void swapNextAndLast();
     void fadeIntoCurrent(uint8_t distance);
 
-    virtual void send();
+    virtual uint32_t send();
 };
 
 #endif // _TWO_CHANNELS_H_

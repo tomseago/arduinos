@@ -30,7 +30,7 @@ public:
     void swapNextAndLast();
     void fadeIntoCurrent(uint8_t distance);
 
-    virtual void send();
+    virtual uint32_t send();
 };
 
 #endif // _WS2801_PIXELS_H_

@@ -85,9 +85,8 @@ TwoChannels::fadeIntoCurrent(uint8_t distance) {
 }
 
 
-void 
+uint32_t 
 TwoChannels::send() {
-	chanA.send();
-	chanB.send();
+	return chanA.send() + chanB.send();
 }
 

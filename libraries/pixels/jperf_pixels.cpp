@@ -131,10 +131,8 @@ JPerfPixels::fadeIntoCurrent(uint8_t distance) {
 }
 
 
-void 
+uint32_t 
 JPerfPixels::send() {
-	neck.send();
-	left.send();
-	right.send();	
+	return neck.send() + left.send() + right.send();	
 }
 

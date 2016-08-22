@@ -54,7 +54,7 @@ protected:
 public:
     WS2812Pixels(uint16_t numPixels, int outputPin, uint8_t type=NEO_GRB + NEO_KHZ800);
 
-    virtual void send();
+    virtual uint32_t send();
 
     virtual uint32_t getPixel(uint16_t which, uint8_t flags = PF_CURRENT_FRAME);
 };

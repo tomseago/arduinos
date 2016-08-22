@@ -51,7 +51,8 @@ public:
     uint32_t Color(uint8_t r, uint8_t g, uint8_t b);
 
 
-    virtual void send() = 0;
+    // Returns the number of micro seconds spent communicating with the pixels
+    virtual uint32_t send() = 0;
 };
 
 #endif // ifndef _PIXELS_H_

@@ -31,7 +31,7 @@ void
 Animator::begin() {
     pixels.setBrightness(255);
     
-    startAnimation(ANIM_FLOOD);
+    startAnimation(ANIM_NONE);
 }
 
 uint32_t now;
@@ -57,11 +57,11 @@ Animator::loop() {
         animParams.elapsedSinceStart = now - animParams.startedAt;
         animParams.elapsedSinceLastDraw = now - animParams.lastDrawAt;
         
-        if (timeScaleFactor > 0) {
-            uint32_t timeOffset = (animParams.elapsedSinceStart * timeScaleFactor) / 1000;
-            animParams.elapsedSinceStart += timeOffset;
-            animParams.elapsedSinceLastDraw += timeOffset;
-        }
+        // if (timeScaleFactor > 0) {
+        //     uint32_t timeOffset = (animParams.elapsedSinceStart * timeScaleFactor) / 1000;
+        //     animParams.elapsedSinceStart += timeOffset;
+        //     animParams.elapsedSinceLastDraw += timeOffset;
+        // }
 
 
         if (animParams.elapsedSinceStart > maxAnimTime || 
@@ -164,7 +164,16 @@ Animator::loop() {
     // }
 
     // Assume work was done
-    pixels.send();
+    uint32_t txSpent = pixels.send();
+
+    if (txSpent) {
+        // Adjust all the "at" times to disappear a few ms. Like probably
+        // about 3 or 4 on a big thing
+        txSpent = txSpent / 1000;
+        lastFrameAt -= txSpent;
+        animParams.startedAt -= txSpent;
+        animParams.lastDrawAt -= txSpent;
+    }
 
 #if ANIMATE_SERVOS
     servos.send();

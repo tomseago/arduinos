@@ -106,10 +106,8 @@ BikePixels::fadeIntoCurrent(uint8_t distance) {
 }
 
 
-void 
+uint32_t 
 BikePixels::send() {
-	front.send();
-	left.send();
-	right.send();	
+	return front.send() + left.send() + right.send();	
 }
 

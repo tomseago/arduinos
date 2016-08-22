@@ -8,7 +8,7 @@ class WS2801Pixels : public Pixels {
 public:
     WS2801Pixels(uint16_t numPixels);
 
-    virtual void send();
+    virtual uint32_t send();
 };
 
 #endif // _WS2801_PIXELS_H_

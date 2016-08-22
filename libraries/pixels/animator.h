@@ -1,7 +1,7 @@
 #ifndef _ANIMATOR_H_
 #define _ANIMATOR_H_
 
-#define ANIMATE_SERVOS true
+#define ANIMATE_SERVOS false
 
 #include <Arduino.h>
 // #include <application.h>
@@ -58,6 +58,7 @@ class Animator {
     uint32_t adjustedFrameLength;
 
     uint32_t maxAnimTime;
+
     
     void updateSpeed();
     
@@ -71,7 +72,7 @@ public:
     // Because the WS2812 code in particular turns of interrupts,
     // this timeScaleFactor can be set to something other than 1000
     // to scale the timing based on how slow millis is running.
-    uint32_t timeScaleFactor;
+    // uint32_t timeScaleFactor;
 
     Animator(Pixels& pix,
 #if ANIMATE_SERVOS
