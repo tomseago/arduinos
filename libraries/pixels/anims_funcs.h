@@ -336,7 +336,7 @@ void Animator::JORDAN_RED_CUFFS_setup() {
 
     animReg = 0;
 
-    pixels.setBrightness(32);
+    pixels.setBrightness(96);
     pixels.setAllPixels(0, PF_NEXT_FRAME);
 }
 
@@ -372,7 +372,7 @@ void Animator::JORDAN_BOY_GIRL_setup() {
     animParams.flags = ANIM_FLAG_WANTS_FADES;
 
     animReg = 0;
-    pixels.setBrightness(16);
+    pixels.setBrightness(32);
 
     for(int i=0; i<JPERF_COUNT; i++) {
         isBoy[i] = false;
@@ -421,6 +421,74 @@ void Animator::JORDAN_BOY_GIRL_drawFrame() {
             animReg = !animReg;
         }
     }
+}
+
+
+/////////////
+
+#define CUFF_STEP 16
+
+#define MARDI_GRAS_GOLD   0x00B07E09
+#define MARDI_GRAS_GREEN  0x00045716
+#define MARDI_GRAS_PURPLE 0x002D0638
+
+uint32_t mardiColors[] = {
+    MARDI_GRAS_PURPLE,
+    MARDI_GRAS_PURPLE,
+    MARDI_GRAS_GOLD,
+    MARDI_GRAS_GREEN,
+    MARDI_GRAS_GREEN,
+};
+// uint32_t mardiColors[] = {
+//     MARDI_GRAS_PURPLE,
+//     MARDI_GRAS_PURPLE,
+//     MARDI_GRAS_PURPLE,
+//     MARDI_GRAS_GOLD,
+//     MARDI_GRAS_GOLD,
+//     MARDI_GRAS_GOLD,
+//     MARDI_GRAS_GREEN,
+//     MARDI_GRAS_GREEN,
+//     MARDI_GRAS_GREEN,
+// };
+
+void Animator::JORDAN_MARDI_GRAS_setup() {
+    animParams.totalFrames = 5;
+    animParams.frameLength = 700;
+    animParams.flags = ANIM_FLAG_WANTS_FADES;
+
+    animReg = 0;
+
+    pixels.setBrightness(128);
+}
+
+void Animator::JORDAN_MARDI_GRAS_drawFrame() {
+
+    uint32_t first, second;
+    animReg = animParams.currentFrame;
+
+    for(uint8_t i=0; i<5; i++) {
+        uint16_t region = i + animParams.currentFrame;
+        if (region > 4) {
+            region -= 5;
+        }
+
+        setJordan(pixels, jordanRegions[region], mardiColors[i], PF_NEXT_FRAME);
+    }
+
+    // if (animParams.currentFrame % 2) {
+    //     first = MARDI_GRAS_PURPLE;
+    //     second = MARDI_GRAS_GREEN;
+    // } else {
+    //     first = MARDI_GRAS_GREEN;
+    //     second = MARDI_GRAS_PURPLE;
+    // }
+    // setJordan(pixels, JREGION_WRISTS, first, PF_CURRENT_FRAME);
+    // setJordan(pixels, JREGION_ELBOWS, first, PF_CURRENT_FRAME);
+    // setJordan(pixels, JREGION_FOREARMS, second, PF_CURRENT_FRAME);
+    // setJordan(pixels, JREGION_BICEPS, second, PF_CURRENT_FRAME);
+
+    //setJordan(pixels, JREGION_NECK, MARDI_GRAS_GOLD, PF_NEXT_FRAME);
+
 }
 
 

@@ -9,13 +9,13 @@
 #include <avr/power.h>
 
 // Neck is 23 on 3
-WS2812Pixels neck = WS2812Pixels(23, 3);
+WS2812Pixels neck = WS2812Pixels(21, 3);
 
 // Left arm is 49 on 8
-WS2812Pixels left = WS2812Pixels(33q, 8);
+WS2812Pixels left = WS2812Pixels(49, 8);
 
 // Right arm is 49 on 10
-WS2812Pixels right = WS2812Pixels(36, 10);
+WS2812Pixels right = WS2812Pixels(49, 10);
 
 JPerfPixels pixels = JPerfPixels(neck, left, right);
 Animator animator = Animator(pixels);
