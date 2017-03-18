@@ -9,7 +9,7 @@
 // 9*4=36 pixels for max 500ma, typical about 200ma
 WS2812Pixels pixels = WS2812Pixels(36, 3);
 
-Animator animator = Animator(pixels);
+Animator animator = Animator(pixels, 120 * 1000);
 uint32_t start = millis();
 
 void setup() {
@@ -20,12 +20,12 @@ void setup() {
   
   // put your setup code here, to run once:
   animator.begin();
+  animator.startAnimation(ANIM_REDS);
   //  pixels.setPixel(0, 0);
   //  pixels.send();
 }
 
 void loop() {
-//  // put your main code here, to run repeatedly:
 //  uint32_t now = millis();
 //
 //  uint32_t elapsed = now - start;

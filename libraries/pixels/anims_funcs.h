@@ -3,7 +3,7 @@
 #define _ANIM_FUNCS_H_
 
 // Want JPERF numbers
-#include "jperf_pixels.h"
+//#include "jperf_pixels.h"
 
 #define ANIM_START(name, frames, len, f_val) void Animator::name##_setup() { \
     animParams.totalFrames = frames; \
@@ -58,22 +58,323 @@ uint32_t rybRainbow[] = {
 };
 #define RYB_RAINBOW_NUM_COLORS 12
 
+
+#define C_RED   0xff0000
+#define C_BLUE  0x0000ff
+
+////
+
+#define START_RIGHT_TOP 0
+#define END_RIGHT_TOP 8
+#define START_RIGHT_BOTTOM 9
+#define END_RIGHT_BOTTOM 17
+#define START_LEFT_BOTTOM 18
+#define END_LEFT_BOTTOM 26
+#define START_LEFT_TOP 27
+#define END_LEFT_TOP 35
+
+#define REGION_LEFT_TOP      (1 << 0)
+#define REGION_LEFT_BOTTOM   (1 << 1)
+#define REGION_RIGHT_TOP     (1 << 2)
+#define REGION_RIGHT_BOTTOM  (1 << 3)
+
+#define REGION_LEFT          (REGION_LEFT_TOP | REGION_LEFT_BOTTOM)
+#define REGION_RIGHT         (REGION_RIGHT_TOP | REGION_RIGHT_BOTTOM)
+#define REGION_TOP           (REGION_LEFT_TOP | REGION_RIGHT_TOP)
+#define REGION_BOTTOM        (REGION_LEFT_BOTTOM | REGION_RIGHT_BOTTOM)
+
+#define REGION_ALL           (REGION_LEFT | REGION_RIGHT)
+
+uint16_t regions[] = {
+    REGION_LEFT,
+    REGION_RIGHT
+};
+
+uint16_t singleRegions[] = {
+    REGION_LEFT_TOP,
+    REGION_LEFT_BOTTOM,
+    REGION_RIGHT_BOTTOM,
+    REGION_RIGHT_TOP,
+};
+
+void setRegion(Pixels& pixels, uint16_t region, uint32_t color, uint8_t flags) {
+
+    if (region & REGION_LEFT_TOP) {
+        for(int i=START_LEFT_TOP; i<=END_LEFT_TOP; i++) {
+            pixels.setPixel(i, color, flags);
+        }
+    }
+
+    if (region & REGION_LEFT_BOTTOM) {
+        for(int i=START_LEFT_BOTTOM; i<=END_LEFT_BOTTOM; i++) {
+            pixels.setPixel(i, color, flags);
+        }
+    }
+
+    if (region & REGION_RIGHT_TOP) {
+        for(int i=START_RIGHT_TOP; i<=END_RIGHT_TOP; i++) {
+            pixels.setPixel(i, color, flags);
+        }
+    }
+
+    if (region & REGION_RIGHT_BOTTOM) {
+        for(int i=START_RIGHT_BOTTOM; i<=END_RIGHT_BOTTOM; i++) {
+            pixels.setPixel(i, color, flags);
+        }
+    }
+}
+
+void setRegionPixel(Pixels& pixels, uint16_t region, uint8_t pix, uint32_t color, uint8_t flags) {
+
+    if (region & REGION_LEFT_TOP) {
+        pixels.setPixel(START_LEFT_TOP + pix, color, flags);
+    }
+
+    if (region & REGION_LEFT_BOTTOM) {
+        pixels.setPixel(END_LEFT_BOTTOM - pix, color, flags);
+    }
+
+    if (region & REGION_RIGHT_TOP) {
+        pixels.setPixel(END_RIGHT_TOP - pix, color, flags);
+    }
+
+    if (region & REGION_RIGHT_BOTTOM) {
+        pixels.setPixel(START_RIGHT_BOTTOM + pix, color, flags);
+    }
+}
+
+#define DEF_MAX_TIME 60 * 1000
+
 /////////
 
-ANIM_START(JORDAN_START, 2, 1000, ANIM_FLAG_WANTS_FADES)
+
+ANIM_START(RED_BLUE, 2, 1000, ANIM_FLAG_NONE)
     pixels.setBrightness(255);
-    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+    animParams.maxTime = DEF_MAX_TIME; // Run forever
+    // pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
 
 ANIM_FRAME(0)
-    pixels.setPixel(0, 0, 64, 0, PF_NEXT_FRAME);
-    pixels.setPixel(JPERF_BOUNDARY_END-1, 0, 64, 0, PF_NEXT_FRAME);
+    setRegion(pixels, REGION_LEFT, C_RED, PF_CURRENT_FRAME);
+    setRegion(pixels, REGION_RIGHT, C_BLUE, PF_CURRENT_FRAME);
 
 ANIM_FRAME(1)
-    pixels.setAllPixels(0, 0, 0, PF_NEXT_FRAME);
+    setRegion(pixels, REGION_LEFT, C_BLUE, PF_CURRENT_FRAME);
+    setRegion(pixels, REGION_RIGHT, C_RED, PF_CURRENT_FRAME);
 
 ANIM_END
 
+
 /////////
+
+void Animator::FRONT_BACK_LINE_setup() {
+    animParams.totalFrames = 9;
+    animParams.frameLength = 200;
+    animParams.flags = ANIM_FLAG_WANTS_FADES;
+
+    animReg = 0;
+
+    pixels.setBrightness(255);
+    animParams.maxTime = DEF_MAX_TIME; // Run forever
+}
+
+void Animator::FRONT_BACK_LINE_drawFrame() {
+
+    if (animParams.currentFrame == 0) {
+        animColor = colorWheel(rand(255));
+    }
+    pixels.setAllPixels(0, PF_NEXT_FRAME);
+
+    setRegionPixel(pixels, REGION_ALL, animParams.currentFrame, animColor, PF_NEXT_FRAME);
+}
+
+
+/////////
+
+void Animator::KITT_setup() {
+    animParams.totalFrames = 16;
+    animParams.frameLength = 200;
+    animParams.flags = ANIM_FLAG_WANTS_FADES;
+
+    animReg = 0;
+
+    pixels.setBrightness(255);
+    animParams.maxTime = DEF_MAX_TIME; 
+}
+
+void Animator::KITT_drawFrame() {
+
+    pixels.setAllPixels(0, PF_NEXT_FRAME);
+
+    uint8_t pix = animParams.currentFrame;
+    if (pix > 8) {
+        pix = 7 - (pix - 9);
+    }
+
+    setRegionPixel(pixels, REGION_ALL, pix, C_RED, PF_NEXT_FRAME);
+}
+
+/////////
+
+
+void Animator::SPARKLE_setup() {
+    animParams.totalFrames = 1600;
+    animParams.frameLength = 40;
+    animParams.flags = ANIM_FLAG_NONE; // No fades
+    animParams.maxTime = DEF_MAX_TIME; // Run forever
+    animReg = 0;
+    pixels.setBrightness(255);
+}
+
+// Below this number will start a fade. Smaller means
+// less frequently
+#define J_FADE_THRESH 2
+// Amount to deduct from brightness each frame. Smaller means
+// fade downs take longer
+#define J_FADE_DOWN 100
+
+// Random threshold for a pixel to sparkle. Smaller means pixels
+// are less likely to sparkle
+#define J_SPARKLE_THRESH 10
+
+// #define SPARKLE_THE_PIXEL pixels.setPixel(i, 245, 218, 64);
+#define SPARKLE_THE_PIXEL { \
+    switch(rand(4)) { \
+        case 0:\
+            pixels.setPixel(i, 255, 255, 27); \
+            break;\
+        case 1:\
+            pixels.setPixel(i, 64, 255, 218); \
+            break;\
+        case 2:\
+            pixels.setPixel(i, 245, 218, 64); \
+            break;\
+        case 3:\
+            pixels.setPixel(i, 255, 140, 140); \
+            break;\
+    }\
+}
+
+
+void Animator::SPARKLE_drawFrame() {
+
+    // Left first
+    uint8_t fadeVal;
+    uint8_t startPixel;
+    uint8_t maxPixel;
+
+    fadeVal = animReg & 0x000000ff;
+    startPixel = 0;
+    maxPixel = pixels.getNumPixels();
+    // if (!fadeVal && (rand(2000) < J_FADE_THRESH)) {
+    //     // Do a fade anyway. IE. Start a burst
+    //     fadeVal = 255;
+    // }
+    // if (fadeVal) {
+    //     // Doing a fade down, so keep doing that
+    //     fadeVal = (fadeVal > J_FADE_DOWN) ? (fadeVal - J_FADE_DOWN) : 0;
+    //     animReg = (animReg & 0xffffff00) | fadeVal;
+
+    //     for(int i=startPixel; i<maxPixel ; i++) {
+    //         // pixels.setPixel(i, fadeVal, fadeVal, fadeVal);
+    //         pixels.setPixel(i, 255, 255, 255);
+    //     }
+    // } else {
+        // Regular sparkle
+        for(int i=startPixel; i<maxPixel; i++) {
+
+            // Pixels have a small chance of being lit up
+            if (rand(5000) < J_SPARKLE_THRESH) {
+                SPARKLE_THE_PIXEL
+            } else {
+                pixels.setPixel(i, 0, 0, 0);
+            }
+        }         
+    // }
+}
+
+/////////
+
+
+void Animator::RANDO_setup() {
+    animParams.totalFrames = 1600;
+    animParams.frameLength = 40;
+    animParams.flags = ANIM_FLAG_NONE; // No fades
+    animParams.maxTime = DEF_MAX_TIME; // Run forever
+    animReg = 0;
+    pixels.setBrightness(140);
+
+    for (int i=0; i<pixels.getNumPixels(); i++) {
+        pixels.setPixel(i, colorWheel(rand(255)), PF_CURRENT_FRAME);
+    }
+}
+
+
+void Animator::RANDO_drawFrame() {
+
+    pixels.setPixel(rand(pixels.getNumPixels()), colorWheel(rand(255)), PF_CURRENT_FRAME);
+
+}
+
+/////////
+
+void Animator::RAINBOW_setup() {
+    animParams.totalFrames = 12;
+    animParams.frameLength = 166;
+    animParams.flags = ANIM_FLAG_WANTS_FADES;
+    pixels.setBrightness(255);
+}
+
+void Animator::RAINBOW_drawFrame() {
+
+    for(uint8_t i = 0; i<9; i++) {
+        uint8_t rIx = (animParams.currentFrame + i) % RYB_RAINBOW_NUM_COLORS;
+
+        setRegionPixel(pixels, REGION_ALL, i, rybRainbow[rIx], PF_NEXT_FRAME);
+    }
+}
+
+/////////
+
+void Animator::RAINBOW_SINGLE_setup() {
+    animParams.totalFrames = 12;
+    animParams.frameLength = 1000;
+    animParams.flags = ANIM_FLAG_WANTS_FADES;
+    pixels.setBrightness(140);
+}
+
+void Animator::RAINBOW_SINGLE_drawFrame() {
+    uint8_t rIx = animParams.currentFrame % RYB_RAINBOW_NUM_COLORS;
+
+    setRegion(pixels, REGION_ALL, rybRainbow[rIx], PF_NEXT_FRAME);
+}
+
+/////////
+
+
+void Animator::REDS_setup() {
+    animParams.totalFrames = 1600;
+    animParams.frameLength = 200;
+    animParams.flags = ANIM_FLAG_NONE; // No fades
+    animParams.maxTime = DEF_MAX_TIME; // Run forever
+    animReg = 0;
+    pixels.setBrightness(140);
+}
+
+
+void Animator::REDS_drawFrame() {
+
+    animColor = 0;
+
+    for (int i=0; i<pixels.getNumPixels(); i++) {
+        animColor = 0;
+        if (rand(1000) < 100) {
+            animColor = C_RED;
+        }
+        pixels.setPixel(i, animColor, PF_CURRENT_FRAME);
+    }
+
+}
+/*
 
 ANIM_START(JORDAN_END, 2, 1000, ANIM_FLAG_WANTS_FADES)
     pixels.setBrightness(255);
@@ -89,7 +390,6 @@ ANIM_FRAME(1)
 ANIM_END
 
 /////////
-
 
 void Animator::JORDAN_SPARKLE_setup() {
     animParams.totalFrames = 1600;
@@ -490,6 +790,7 @@ void Animator::JORDAN_MARDI_GRAS_drawFrame() {
     //setJordan(pixels, JREGION_NECK, MARDI_GRAS_GOLD, PF_NEXT_FRAME);
 
 }
+*/
 
 
 // void Animator::FLOOD_setup() {
